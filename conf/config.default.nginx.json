@@ -1,0 +1,10 @@
+{
+	"webserver_root":       "/var/www/vhosts",
+	"vhosts_path":       	"/etc/nginx/sites-available",
+	"vhosts_enabled_path":  "/etc/nginx/sites-enabled",
+	"phpfpm_pools_path":    "/etc/php5/fpm/pool.d",
+	"webserver_type":       "nginx",
+	"use_rzcms":            true,
+	"use_index_entrypoint": true,
+	"notification_email":   "test@test.com"
+}

@@ -1,0 +1,10 @@
+{
+	"webserver_root":       "/var/www/vhosts",
+	"vhosts_path":       	"/etc/apache2/sites-available",
+	"vhosts_enabled_path":  "/etc/apache2/sites-enabled",
+	"phpfpm_pools_path":    "/etc/php5/fpm/pool.d",
+	"webserver_type":       "apache2",
+	"use_rzcms":            true,
+	"use_index_entrypoint": true,
+	"notification_email":   "test@test.com"
+}
