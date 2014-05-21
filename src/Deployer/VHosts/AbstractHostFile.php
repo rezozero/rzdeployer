@@ -9,17 +9,46 @@
  * @copyright REZO ZERO 2014
  * @author Ambroise Maupate
  */
-namespace rezozero\VHosts;
+namespace rezozero\Deployer\VHosts;
 
-class AbstractHostFile
+use rezozero\Deployer\Controllers\Kernel;
+
+abstract class AbstractHostFile
 {
 	private $loader;
 	private $twig;
+	private $vhostFile;
+	private $poolFile;
 
 	public abstract function generateVirtualHost();
-	public abstract function enableVirtualHost();
+
+	public function enableVirtualHost(){
+		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
+
+		if (file_exists($vhostFile) && 
+			is_writable($mainConf['vhosts_enabled_path'])) {
+			return symlink ( $vhostFile , $mainConf['vhosts_enabled_path'].'/'.$hostname );
+		}
+
+		return false;
+	}
 	public abstract function generatePHPPool();
-	public abstract function enablePHPPool();
+
+	public function restartServers(){
+		
+		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+
+		switch ($mainConf['webserver_type']) {
+			case 'nginx':
+				exec("/etc/init.d/nginx restart");
+				break;
+			case 'apache2':
+				exec("/etc/init.d/apache2 restart");
+				break;
+		}
+		exec("/etc/init.d/php5-fpm restart");
+	}
 
 	public function __construct(){
 		//parent::__construct();

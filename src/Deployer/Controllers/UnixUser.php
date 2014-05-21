@@ -83,7 +83,7 @@ class UnixUser {
 	{
 		return $this->homeFolder;
 	}
-	public function getUser()
+	public function getName()
 	{
 		return $this->username;
 	}

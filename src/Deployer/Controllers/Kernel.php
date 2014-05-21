@@ -72,7 +72,7 @@ class Kernel
 		$msg .= $this->configuration->getHostname()." is now deployed on your webserver.".PHP_EOL.PHP_EOL;
 		$msg .= "Hostname: ".$this->configuration->getHostname().PHP_EOL;
 
-		$msg .= "SSH user: ".$this->unixUser->getUser().PHP_EOL;
+		$msg .= "SSH user: ".$this->unixUser->getName().PHP_EOL;
 		$msg .= "SSH password: ".$this->unixUser->getPassword().PHP_EOL;
 		$msg .= "SSH path: ".$this->unixUser->getHome().PHP_EOL.PHP_EOL;
 
@@ -83,6 +83,11 @@ class Kernel
 		$msg .= "=========================================".PHP_EOL;
 
 		return $msg;
+	}
+
+	public function getUser()
+	{
+		return $this->unixUser;
 	}
 
 	public function mailSummary()
