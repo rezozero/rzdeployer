@@ -16,6 +16,10 @@ require("vendor/autoload.php");
 
 use rezozero\Controllers\Kernel;
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 $user = trim(shell_exec('whoami'));
 if ($user != 'root') {
 	echo "[".$user."] — You must have super-user privileges to go on.".PHP_EOL;
@@ -23,7 +27,7 @@ if ($user != 'root') {
 }
 
 if( php_sapi_name() === 'cli' OR defined('STDIN') ) {
-	Kernel::getInstance();
+	Kernel::getInstance()->run();
 }
 else {
 	echo "[".$user."] — You must invoke RZDeployer from commandline only.".PHP_EOL;

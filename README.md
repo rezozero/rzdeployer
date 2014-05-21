@@ -2,6 +2,8 @@
 
 A simple PHP command-line tool to create virtual hosts and create essential webserver files.
 
+We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-users virtual hosts.
+
 ## What does it do
 
 * Create a system user for each virtual host and generate a random password
@@ -12,6 +14,7 @@ A simple PHP command-line tool to create virtual hosts and create essential webs
 * Create a symlink into your site-enabled folder
 * Restart webserver
 * Notify by email
+* Clone and install a RZ-CMS instance (optional)
 
 ## Input
 
@@ -31,3 +34,19 @@ Virtual hosts files and home folder will named after your server name.
 * Edit your own configuration
 * Be sure to have at least PHP 5.4 installed in CLI mode.
 * Run `sudo php app.php` (RZ Deployer must be run as super-user)
+* Follow instructions
+* If you chose to install RZCMS, you must have access to private REZO ZERO Git repository (a password will be requested)
+
+## Apache and PHP-FPM
+
+We always ensure that *Unix user* and *PHP user* can read/write the same files without messing your file permissions. It's why we work with PHP-FPM, creating a different pool for each user so that PHP will run as your *user*, not *www-data*. To use Apache with PHP-FPM you can read these useful articles : 
+
+* http://www.janoszen.com/2013/04/29/setting-up-apache-with-php-fpm/ 
+* https://alexcabal.com/installing-apache-mod_fastcgi-php-fpm-on-ubuntu-server-maverick/
+* and some gist: https://gist.github.com/diemuzi/3849349
+
+**Nginx will work seamlessly with PHP-FPM**. Just make a regular install of Nginx.
+
+## Password
+
+RZ Deployer uses `/dev/urandom` and `mkpasswd` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.

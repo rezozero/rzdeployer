@@ -48,7 +48,7 @@ class Configuration
 		}
 	}
 
-	public function getConfig()
+	public function getData()
 	{
 		return $this->config;
 	}
@@ -60,9 +60,16 @@ class Configuration
 		while (empty($line) || strpos($line, '/')) {
 			echo "Choose a valid server name (hostname): ".PHP_EOL."> ";
 			$line = trim(fgets(STDIN));
+			// securize input
+			$line = str_replace("|", "", $line);
+			$line = str_replace("&", "", $line);
 		}
 		$this->hostname = $line;
 
+	}
+	public function getHostname()
+	{
+		return $this->hostname;
 	}
 	public function requestUsername()
 	{
@@ -71,16 +78,37 @@ class Configuration
 		while (empty($line)) {
 			echo "Choose an username: ".PHP_EOL."> ";
 			$line = trim(fgets(STDIN));
+			// securize input
+			$line = str_replace("|", "", $line);
+			$line = str_replace("&", "", $line);
 		}
 		$this->username = $line;
 	}
-	public function generatePassword()
+	public function getUsername()
 	{
-		# code...
+		return $this->username;
 	}
 
 	public function verifyConfiguration()
 	{
+		if (empty($this->config['mysql_host'])) {
+			echo "[ERROR] Your must configure a MySQL server host.".PHP_EOL;
+			return false;
+		}
+		if (empty($this->config['mysql_user'])) {
+			echo "[ERROR] Your must configure a MySQL super-user.".PHP_EOL;
+			return false;
+		}
+		if (empty($this->config['mysql_password'])) {
+			echo "[ERROR] Your must configure the MySQL super-user password.".PHP_EOL;
+			return false;
+		}
+		if (empty($this->config['webserver_root']) || 
+			!is_writable($this->config['webserver_root'])) {
+			
+			echo "[ERROR] Your webserver root path is not writable.".PHP_EOL;
+			return false;
+		}
 		if (empty($this->config['webserver_root']) || 
 			!is_writable($this->config['webserver_root'])) {
 			

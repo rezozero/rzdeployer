@@ -9,7 +9,7 @@
  * @copyright REZO ZERO 2014
  * @author Ambroise Maupate
  */
-namespace rezozero\Controllers;
+namespace rezozero\VHosts;
 
 class AbstractHostFile
 {
