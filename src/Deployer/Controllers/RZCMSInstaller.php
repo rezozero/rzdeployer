@@ -10,7 +10,7 @@
  * @copyright REZO ZERO 2014
  * @author Ambroise Maupate
  */
-namespace rezozero\Controllers;
+namespace rezozero\Deployer\Controllers;
 
 
 /**

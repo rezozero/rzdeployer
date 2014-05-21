@@ -1,5 +1,7 @@
+vendor/*
 node_modules
 conf/config.json
 adddomain.php
 .DS_Store
 .AppleDouble
+composer.phar

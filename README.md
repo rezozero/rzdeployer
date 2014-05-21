@@ -27,9 +27,11 @@ MySQL username and database name will be named after the system user.
 MySQL username could be truncated is too long, but it will be displayed in final notification email.
 Virtual hosts files and home folder will named after your server name.
 
-## How to use it
+# How to use it
 
-* Clone current repository
+* Clone current repository and `cd rzdeployer`
+* Install *Composer* : `curl -sS https://getcomposer.org/installer | php`
+* Run `php composer.phar install` to install dependencies and create the *autoloader*
 * Copy `conf/config.default.apache2.json` or `conf/config.default.nginx.json` to `conf/config.json`
 * Edit your own configuration
 * Be sure to have at least PHP 5.4 installed in CLI mode.
@@ -49,4 +51,4 @@ We always ensure that *Unix user* and *PHP user* can read/write the same files w
 
 ## Password
 
-RZ Deployer uses `/dev/urandom` and `mkpasswd` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.
+RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.

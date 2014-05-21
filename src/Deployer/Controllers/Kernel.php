@@ -1,12 +1,12 @@
 <?php 
 
 
-namespace rezozero\Controllers;
+namespace rezozero\Deployer\Controllers;
 
-use rezozero\Controllers\Configuration;
-use rezozero\Controllers\UnixUser;
-use rezozero\Controllers\Database;
-use rezozero\Controllers\Password;
+use rezozero\Deployer\Controllers\Configuration;
+use rezozero\Deployer\Controllers\UnixUser;
+use rezozero\Deployer\Controllers\Database;
+use rezozero\Deployer\Controllers\Password;
 /**
 * 
 */

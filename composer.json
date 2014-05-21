@@ -1,0 +1,8 @@
+{
+    "require": {
+        "twig/twig": "1.*"
+    },
+    "autoload": {
+        "psr-4": {"rezozero\\": "src/"}
+    }
+}

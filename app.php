@@ -14,7 +14,7 @@ define('APP_ROOT', dirname(__FILE__));
 
 require("vendor/autoload.php");
 
-use rezozero\Controllers\Kernel;
+use rezozero\Deployer\Controllers\Kernel;
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

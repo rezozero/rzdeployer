@@ -9,10 +9,10 @@
  * @copyright REZO ZERO 2014
  * @author Ambroise Maupate
  */
-namespace rezozero\Controllers;
+namespace rezozero\Deployer\Controllers;
 
-use rezozero\Controllers\Kernel;
-use rezozero\Controllers\Password;
+use rezozero\Deployer\Controllers\Kernel;
+use rezozero\Deployer\Controllers\Password;
 
 class Database {
 
