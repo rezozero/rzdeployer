@@ -11,6 +11,9 @@
  */
 namespace rezozero\Deployer\Controllers;
 
+
+use rezozero\Deployer\Controllers\Kernel;
+
 class Configuration 
 {
 	private $config;
@@ -26,6 +29,26 @@ class Configuration
 
 	public function __construct(){
 		
+	}
+
+	/**
+	 * 
+	 * @return string Class Name 
+	 */
+	public function getVHostClass()
+	{
+		switch ($this->config['webserver_type']) {
+			case 'apache2':
+				
+				return "rezozero\Deployer\VHosts\ApacheHost";
+				break;
+			case 'nginx':
+				
+				return "rezozero\Deployer\VHosts\NginxHost";
+				break;
+		}
+
+		return false;
 	}
 
 	public function setConfigFile( $file )
@@ -58,7 +81,9 @@ class Configuration
 		$line = '';
 
 		while (empty($line) || strpos($line, '/')) {
-			echo "Choose a valid server name (hostname): ".PHP_EOL."> ";
+
+
+			echo Kernel::getInstance()->getColor()->getColoredString("Choose a valid server name (hostname): ", null, 'green').PHP_EOL."> ";
 			$line = trim(fgets(STDIN));
 			// securize input
 			$line = str_replace("|", "", $line);
@@ -76,7 +101,7 @@ class Configuration
 		$line = '';
 
 		while (empty($line)) {
-			echo "Choose an username: ".PHP_EOL."> ";
+			echo Kernel::getInstance()->getColor()->getColoredString("Choose an username: ", null, 'green').PHP_EOL."> ";
 			$line = trim(fgets(STDIN));
 			// securize input
 			$line = str_replace("|", "", $line);
@@ -92,57 +117,57 @@ class Configuration
 	public function verifyConfiguration()
 	{
 		if (empty($this->config['mysql_host'])) {
-			echo "[ERROR] Your must configure a MySQL server host.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your must configure a MySQL server host.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['mysql_user'])) {
-			echo "[ERROR] Your must configure a MySQL super-user.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your must configure a MySQL super-user.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['mysql_password'])) {
-			echo "[ERROR] Your must configure the MySQL super-user password.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your must configure the MySQL super-user password.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['webserver_root']) || 
 			!is_writable($this->config['webserver_root'])) {
 			
-			echo "[ERROR] Your webserver root path is not writable.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your webserver root path is not writable.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['webserver_root']) || 
 			!is_writable($this->config['webserver_root'])) {
 			
-			echo "[ERROR] Your webserver root path is not writable.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your webserver root path is not writable.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['vhosts_path']) || 
 			!is_writable($this->config['vhosts_path'])) {
 			
-			echo "[ERROR] Your virtual hosts path is not writable.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your virtual hosts path is not writable.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['vhosts_enabled_path']) || 
 			!is_writable($this->config['vhosts_enabled_path'])) {
 			
-			echo "[ERROR] Your enabled virtual hosts path is not writable.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your enabled virtual hosts path is not writable.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['phpfpm_pools_path']) || 
 			!is_writable($this->config['phpfpm_pools_path'])) {
 			
-			echo "[ERROR] Your PHP FPM pools path is not writable.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your PHP FPM pools path is not writable.", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['webserver_type']) || 
 			!in_array($this->config['webserver_type'], static::$serverAvailable)) {
 			
-			echo "[ERROR] Your server type is not available, you must choose between [".implode(", ", static::$serverAvailable)."].".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] Your server type is not available, you must choose between [".implode(", ", static::$serverAvailable)."].", 'red', null).PHP_EOL;
 			return false;
 		}
 		if (empty($this->config['notification_email']) || 
 			filter_var($this->config['notification_email'], FILTER_VALIDATE_EMAIL) === false) {
 			
-			echo "[ERROR] You must use a valid notification email.".PHP_EOL;
+			echo Kernel::getInstance()->getColor()->getColoredString("[ERROR] You must use a valid notification email.", 'red', null).PHP_EOL;
 			return false;
 		}
 

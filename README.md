@@ -43,7 +43,7 @@ Virtual hosts files and home folder will named after your server name.
 
 We always ensure that *Unix user* and *PHP user* can read/write the same files without messing your file permissions. It's why we work with PHP-FPM, creating a different pool for each user so that PHP will run as your *user*, not *www-data*. To use Apache with PHP-FPM you can read these useful articles : 
 
-* http://www.janoszen.com/2013/04/29/setting-up-apache-with-php-fpm/ 
+* http://blog.kmp.or.at/2013/06/apache-2-2-on-debian-wheezy-w-php-fpm-fastcgi-apc-and-a-kind-of-suexec/
 * https://alexcabal.com/installing-apache-mod_fastcgi-php-fpm-on-ubuntu-server-maverick/
 * and some gist: https://gist.github.com/diemuzi/3849349
 
@@ -52,3 +52,41 @@ We always ensure that *Unix user* and *PHP user* can read/write the same files w
 ## Password
 
 RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.
+
+# Configuration
+
+Parameter                | Default value                | Description  
+-------------------------|------------------------------| ------------
+`webserver_root` 	     | /var/www/vhosts              | System folder in which virtual host home folder will be created
+`webserver_group` 	     | www-data                     | Owner of Apache or Nginx processes (User and Group)
+`vhosts_path` 	         | /etc/apache2/sites-available | Webserver virtual host file repository
+`vhosts_enabled_path`    | /etc/apache2/sites-enabled   | Activated virtual host symlinks folder
+`phpfpm_enabled` 	     | *false* or *true* for nginx  | Use php-fpm with apache2 (forced *true* with Nginx)
+`phpfpm_pools_path` 	 | /etc/php5/fpm/pool.d         | PHP-FPM pools repository folder
+`mpm_itk`                | *false*                      | A quick and dirty way to enable *per-user* apache processes. No need for php-fpm but it’s not the same performances and security.
+`webserver_type` 	     | *apache2*  or *nginx*        | Webserver engine (*Nginx recommanded*)
+`use_rzcms` 	         | false                        | Clone RZ-CMS and configure virtual hosts to enable RZ-CMS on your website
+`use_index_entrypoint`   | false                        | No implemented yet
+`sender_email` 	         | sender@test.com              | Sender email address for notifications
+`notification_email` 	 | test@test.com                | Final email address to receive summary
+`mysql_host` 	         | localhost                    | MySQL server host address
+`mysql_user` 	         | root                         | MySQL super-user name
+`mysql_password` 	     | ************                 | MySQL super-user password
+`allowssh_group` 	     | sshusers                     | Additional unix group for your virtual host user
+
+# Files
+
+RZ Deployer will generate the followin file tree in your webserver root : 
+
+* **/www.yourdomain.com** *[www-data:user]*
+    * **/htdocs** *[user:user]*
+        * index.php (with phpinfo(); method)
+    * **/log** *[www-data:user:0775]*
+        * access.log
+        * error.log
+        * fpm-error.log
+    * php5-fpm.sock *[root:root]*
+    * **/private** *[user:user]*
+        * **backups**
+        * **git**
+    * **/.ssh** *[user:user:0700]*

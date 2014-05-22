@@ -22,8 +22,11 @@ class UnixUser {
 	private $homeFolder;
 
 	public function __construct( $username ){
-		$this->username = $username;
-		$this->password = Password::generate(8);
+		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+
+		$this->username =   $username;
+		$this->password =   Password::generate(8);
+		$this->homeFolder = $mainConf["webserver_root"]."/".Kernel::getInstance()->getConfiguration()->getHostname();
 	}
 
 	public function createUser()
@@ -32,7 +35,6 @@ class UnixUser {
 		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
 		$results = null;		
-		$this->homeFolder = $mainConf["webserver_root"]."/".$hostname;
 
 		/*
 		 * Additionnal groups
@@ -92,6 +94,11 @@ class UnixUser {
 		return $this->password;
 	}
 
+	public function userExists()
+	{
+		return file_exists($this->homeFolder);
+	}
+
 	public function createFileStructure()
 	{	
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
@@ -104,6 +111,12 @@ class UnixUser {
 			touch($this->homeFolder."/php5-fpm.sock");
 			chmod($this->homeFolder."/php5-fpm.sock", 0666);
 
+			// Create special log folder 
+			$this->createFolder($this->homeFolder."/log");
+			chown($this->homeFolder."/log", $mainConf['webserver_group']);
+			chmod($this->homeFolder."/log", 0775);
+
+			// Create user folders
 			$this->createFolder($this->homeFolder."/htdocs");
 			$this->createFolder($this->homeFolder."/private");
 			$this->createFolder($this->homeFolder."/private/git");
@@ -111,6 +124,12 @@ class UnixUser {
 			$this->createFolder($this->homeFolder."/.ssh");
 
 			chmod($this->homeFolder."/.ssh", 0700);
+
+			// Create test file
+			file_put_contents($this->homeFolder."/htdocs/index.php", "<?php phpinfo(); ?>");
+			chown($this->homeFolder."/htdocs/index.php", $this->username);
+			chgrp($this->homeFolder."/htdocs/index.php", $this->username);
+			chmod($this->homeFolder."/htdocs/index.php", 0644);
 
 			return true;
 		}

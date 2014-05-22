@@ -15,10 +15,8 @@ use rezozero\Deployer\Controllers\Kernel;
 
 abstract class AbstractHostFile
 {
-	private $loader;
-	private $twig;
-	private $vhostFile;
-	private $poolFile;
+	protected $vhostFile;
+	protected $poolFile;
 
 	public abstract function generateVirtualHost();
 
@@ -26,9 +24,10 @@ abstract class AbstractHostFile
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
-		if (file_exists($vhostFile) && 
+		if (file_exists($this->vhostFile) && 
 			is_writable($mainConf['vhosts_enabled_path'])) {
-			return symlink ( $vhostFile , $mainConf['vhosts_enabled_path'].'/'.$hostname );
+
+			return symlink( $this->vhostFile , $mainConf['vhosts_enabled_path'].'/'.Kernel::getInstance()->getUser()->getName().".conf" );
 		}
 
 		return false;
@@ -51,21 +50,41 @@ abstract class AbstractHostFile
 	}
 
 	public function __construct(){
-		//parent::__construct();
 		
-		$this->loader = new Twig_Loader_Filesystem(APP_ROOT.'/views');
-		$this->twig = new Twig_Environment($loader);
+		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+		$this->vhostFile = $mainConf['vhosts_path']."/".Kernel::getInstance()->getUser()->getName().".conf";
+		$this->poolFile = $mainConf['phpfpm_pools_path']."/".Kernel::getInstance()->getUser()->getName().".conf";
+	}
+
+	public function virtualHostExists()
+	{
+		return file_exists($this->vhostFile);
+	}
+	public function poolFileExists()
+	{
+		return file_exists($this->poolFile);
+	}
+
+	public function getVHostFile()
+	{
+		return $this->vhostFile;
+	}
+	public function getPoolFile()
+	{
+		return $this->poolFile;
 	}
 
 	/**
-	 * Wrap Twig_Environment::render method
-	 * @param  string $template Relative path to template
-	 * @param  array $vars     Variables to inject into template
-	 * @return string Output content
+	 * Check if system folder are writable
+	 * @return boolean
 	 */
-	public function render( $template, &$vars )
+	public function isWritable()
 	{
-		return $twig->render($template, $vars);
+		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+
+		return is_writable($mainConf['vhosts_enabled_path']) && 
+		       is_writable($mainConf['vhosts_path']) && 
+		       is_writable($mainConf['phpfpm_pools_path']);
 	}
 	/**
 	 * Genere a file according to template and variables
@@ -77,7 +96,7 @@ abstract class AbstractHostFile
 	public function generateFile( $dest, $template, &$vars )
 	{
 		if (is_writable(dirname($dest))) {
-			$content = $this->render($template, $vars);
+			$content = Kernel::getInstance()->render($template, $vars);
 			if (file_put_contents($dest, $content)) {
 				return true;
 			}

@@ -5,3 +5,4 @@ adddomain.php
 .DS_Store
 .AppleDouble
 composer.phar
+.subl*
