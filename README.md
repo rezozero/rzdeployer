@@ -63,6 +63,7 @@ Parameter                | Default value                | Description
 `vhosts_enabled_path`    | /etc/apache2/sites-enabled   | Activated virtual host symlinks folder
 `phpfpm_enabled` 	     | *false* or *true* for nginx  | Use php-fpm with apache2 (forced *true* with Nginx)
 `phpfpm_pools_path` 	 | /etc/php5/fpm/pool.d         | PHP-FPM pools repository folder
+`phpmyadmin_install`     | false                        | Insert a special location in your nginx vhost for phpmyadmin (false by default, you'd prefer using a unique URL for every vhosts with HTTPS connexion)
 `mpm_itk`                | *false*                      | A quick and dirty way to enable *per-user* apache processes. No need for php-fpm but it’s not the same performances and security.
 `webserver_type` 	     | *apache2*  or *nginx*        | Webserver engine (*Nginx recommanded*)
 `use_rzcms` 	         | false                        | Clone RZ-CMS and configure virtual hosts to enable RZ-CMS on your website
@@ -81,11 +82,11 @@ RZ Deployer will generate the followin file tree in your webserver root :
 * **/www.yourdomain.com** *[www-data:user]*
     * **/htdocs** *[user:user]*
         * index.php (with phpinfo(); method)
-    * **/log** *[www-data:user:0775]*
+    * **/log** *[user:root:0770]*
         * access.log
         * error.log
         * fpm-error.log
-    * php5-fpm.sock *[root:root]*
+    * php5-fpm.sock *[root:root:0666]*
     * **/private** *[user:user]*
         * **backups**
         * **git**

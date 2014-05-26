@@ -28,7 +28,8 @@ class NginxHost extends AbstractHostFile
 				'datetime'=>	  time(),
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,
-				'rzcms_install'=> (boolean)$mainConf['use_rzcms']
+				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
+				'phpmyadmin_install'=> (boolean)$mainConf['phpmyadmin_install']
 			);
 
 			return $this->generateFile($this->vhostFile, 'nginx.example.com', $vars);

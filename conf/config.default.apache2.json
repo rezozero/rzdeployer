@@ -5,6 +5,7 @@
 	"vhosts_enabled_path":  "/etc/apache2/sites-enabled",
 	"phpfpm_enabled":       true,
 	"phpfpm_pools_path":    "/etc/php5/fpm/pool.d",
+	"phpmyadmin_install":   false,
 	"mpm_itk":              false,
 	"webserver_type":       "apache2",
 	"use_rzcms":            true,

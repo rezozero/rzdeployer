@@ -54,6 +54,7 @@ server {
 		deny all;
 	}
 
+	{% if phpmyadmin_install %}
 	# PHPMYADMIN
 	location /phpmyadmin {
        root /usr/share/;
@@ -75,4 +76,5 @@ server {
     location /phpMyAdmin {
            rewrite ^/* /phpmyadmin last;
     }
+    {% endif %}
 }
