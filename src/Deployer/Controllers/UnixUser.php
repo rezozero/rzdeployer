@@ -107,22 +107,26 @@ class UnixUser {
 
 			chown($this->homeFolder, $mainConf['webserver_group']);
 			chgrp($this->homeFolder, $this->username);
+			chmod($this->homeFolder, 0750);
 			
 			touch($this->homeFolder."/php5-fpm.sock");
+			chown($this->homeFolder."/php5-fpm.sock", "root");
+			chgrp($this->homeFolder."/php5-fpm.sock", "root");
 			chmod($this->homeFolder."/php5-fpm.sock", 0666);
 
 			// Create special log folder 
 			$this->createFolder($this->homeFolder."/log");
-			chown($this->homeFolder."/log", $mainConf['webserver_group']);
-			chmod($this->homeFolder."/log", 0775);
+			chown($this->homeFolder."/log", $this->username);
+			chgrp($this->homeFolder."/log", "root");
+			chmod($this->homeFolder."/log", 0770);
 
 			// Create user folders
 			$this->createFolder($this->homeFolder."/htdocs");
 			$this->createFolder($this->homeFolder."/private");
 			$this->createFolder($this->homeFolder."/private/git");
 			$this->createFolder($this->homeFolder."/private/backup");
-			$this->createFolder($this->homeFolder."/.ssh");
 
+			$this->createFolder($this->homeFolder."/.ssh");
 			chmod($this->homeFolder."/.ssh", 0700);
 
 			// Create test file
