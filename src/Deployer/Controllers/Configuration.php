@@ -80,7 +80,7 @@ class Configuration
 	{
 		$line = '';
 
-		while (empty($line) || strpos($line, '/')) {
+		while (empty($line) || strpos($line, '/') || strpos($line, ' ')) {
 
 
 			echo Kernel::getInstance()->getColor()->getColoredString("Choose a valid server name (hostname): ", null, 'green').PHP_EOL."> ";
@@ -100,7 +100,7 @@ class Configuration
 	{
 		$line = '';
 
-		while (empty($line)) {
+		while (empty($line) || strpos($line, ' ')) {
 			echo Kernel::getInstance()->getColor()->getColoredString("Choose an username: ", null, 'green').PHP_EOL."> ";
 			$line = trim(fgets(STDIN));
 			// securize input

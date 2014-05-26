@@ -12,7 +12,7 @@ We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-u
 * Create a PHP FPM socket file into your user home
 * Create a virtual host config file (apache2 or nginx) in your sites-available
 * Create a symlink into your site-enabled folder
-* Restart webserver
+* _Restart webserver_
 * Notify by email
 * Clone and install a RZ-CMS instance (optional)
 
@@ -77,17 +77,17 @@ Parameter                | Default value                | Description
 
 # Files
 
-RZ Deployer will generate the followin file tree in your webserver root : 
+RZ Deployer will generate the following file tree in your webserver root : 
 
-* **/www.yourdomain.com** *[www-data:user]*
-    * **/htdocs** *[user:user]*
+* (/var/www/vhosts)**/www.yourdomain.com** *[www-data:user:0750]*
+    * **/htdocs** *[user:user:0755]*
         * index.php (with phpinfo(); method)
     * **/log** *[user:root:0770]*
         * access.log
         * error.log
         * fpm-error.log
     * php5-fpm.sock *[root:root:0666]*
-    * **/private** *[user:user]*
+    * **/private** *[user:user:0755]*
         * **backups**
         * **git**
     * **/.ssh** *[user:user:0700]*

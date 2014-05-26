@@ -105,10 +105,16 @@ class UnixUser {
 
 		if (chdir($this->homeFolder) !== false) {
 
+			/*
+			 * Change user home mod to 750 and writable by www-data
+			 */
 			chown($this->homeFolder, $mainConf['webserver_group']);
 			chgrp($this->homeFolder, $this->username);
 			chmod($this->homeFolder, 0750);
 			
+			/*
+			 * Create the php-fpm socket
+			 */
 			touch($this->homeFolder."/php5-fpm.sock");
 			chown($this->homeFolder."/php5-fpm.sock", "root");
 			chgrp($this->homeFolder."/php5-fpm.sock", "root");
@@ -126,6 +132,9 @@ class UnixUser {
 			$this->createFolder($this->homeFolder."/private/git");
 			$this->createFolder($this->homeFolder."/private/backup");
 
+			/*
+			 * SSH folder must be only read/writeable by user
+			 */
 			$this->createFolder($this->homeFolder."/.ssh");
 			chmod($this->homeFolder."/.ssh", 0700);
 
