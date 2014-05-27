@@ -91,7 +91,6 @@
             Allow from localhost
         </FilesMatch>
     </Directory>
-    # ------- Secure RZ_CMS folders ------------------------
     <Directory {{ rootPath }}/htdocs/fonts/>
         <FilesMatch ".$">
             Order deny,allow
@@ -99,7 +98,6 @@
             Allow from localhost
         </FilesMatch>
     </Directory>
-    # ------- Secure RZ_CMS folders ------------------------
     <Directory {{ rootPath }}/htdocs/private_documents/>
         <FilesMatch ".$">
             Order deny,allow

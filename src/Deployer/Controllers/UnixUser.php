@@ -132,6 +132,10 @@ class UnixUser {
 			$this->createFolder($this->homeFolder."/private/git");
 			$this->createFolder($this->homeFolder."/private/backup");
 
+			// Special folder to store your domain DKIM public and private keys
+			$this->createFolder($this->homeFolder."/private/dkim");
+			chmod($this->homeFolder."/private/dkim", 0700);
+
 			/*
 			 * SSH folder must be only read/writeable by user
 			 */

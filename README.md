@@ -88,6 +88,35 @@ RZ Deployer will generate the following file tree in your webserver root :
         * fpm-error.log
     * php5-fpm.sock *[root:root:0666]*
     * **/private** *[user:user:0755]*
-        * **backups**
-        * **git**
+        * **/backups**
+        * **/git**
+        * **/dkim** *[user:user:0700]*
     * **/.ssh** *[user:user:0700]*
+
+
+# Logs
+
+Nginx, Apache and PHP-fpm logs will be generated into each virtual host log folder.
+Do not forget to update your `logrotate.d` script, for example:
+
+<pre><code>
+/var/www/vhosts/*/log/*.log {
+    daily
+    missingok
+    rotate 10
+    compress
+    delaycompress
+    notifempty
+    sharedscripts
+    prerotate
+        if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+            run-parts /etc/logrotate.d/httpd-prerotate; \
+        fi; \
+    endscript
+    postrotate
+        service nginx restart && service php5-fpm restart
+    endscript
+}
+</code></pre>
+
+I removed the `create` parameter not to create *root:root* log files which won’t be writable by PHP. So you need to restart servers to re-create empty logfiles.
