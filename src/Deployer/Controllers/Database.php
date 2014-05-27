@@ -35,11 +35,11 @@ class Database {
 	    	$pdo = new \PDO($dsn,$mainConf['mysql_user'],$mainConf['mysql_password']);
 
 	    	//Creation of user "user_name"
-	    	$pdo->query("CREATE USER '".$this->dbUsername."'@'%' IDENTIFIED BY '".$this->dbPassword."';");
+	    	$pdo->query("CREATE USER '".$this->dbUsername."'@'".$mainConf['mysql_host']."' IDENTIFIED BY '".$this->dbPassword."';");
 	    	//Creation of database "new_db"
 	    	$pdo->query("CREATE DATABASE `".$this->dbUsername."`;");
 	    	//Adding all privileges on our newly created database
-	    	$pdo->query("GRANT ALL PRIVILEGES on `".$this->dbUsername."`.* TO '".$this->dbUsername."'@'%';");
+	    	$pdo->query("GRANT ALL PRIVILEGES on `".$this->dbUsername."`.* TO '".$this->dbUsername."'@'".$mainConf['mysql_host']."';");
 
 	    	return true;
 		}
