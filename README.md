@@ -27,7 +27,7 @@ MySQL username and database name will be named after the system user.
 MySQL username could be truncated is too long, but it will be displayed in final notification email.
 Virtual hosts files and home folder will named after your server name.
 
-# How to use it
+## How to use it
 
 * Clone current repository and `cd rzdeployer`
 * Install *Composer* : `curl -sS https://getcomposer.org/installer | php`
@@ -39,7 +39,7 @@ Virtual hosts files and home folder will named after your server name.
 * Follow instructions
 * If you chose to install RZCMS, you must have access to private REZO ZERO Git repository (a password will be requested)
 
-## Apache and PHP-FPM
+### Apache and PHP-FPM
 
 We always ensure that *Unix user* and *PHP user* can read/write the same files without messing your file permissions. It's why we work with PHP-FPM, creating a different pool for each user so that PHP will run as your *user*, not *www-data*. To use Apache with PHP-FPM you can read these useful articles : 
 
@@ -49,11 +49,11 @@ We always ensure that *Unix user* and *PHP user* can read/write the same files w
 
 **Nginx will work seamlessly with PHP-FPM**. Just make a regular install of Nginx.
 
-## Password
+### Password
 
 RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.
 
-# Configuration
+## Configuration
 
 Parameter                | Default value                | Description  
 -------------------------|------------------------------| ------------
@@ -75,7 +75,7 @@ Parameter                | Default value                | Description
 `mysql_password` 	     | ************                 | MySQL super-user password
 `allowssh_group` 	     | sshusers                     | Additional unix group for your virtual host user
 
-# Files
+## Files
 
 RZ Deployer will generate the following file tree in your webserver root : 
 
@@ -94,7 +94,7 @@ RZ Deployer will generate the following file tree in your webserver root :
     * **/.ssh** *[user:user:0700]*
 
 
-# Logs
+## Logs
 
 Nginx, Apache and PHP-fpm logs will be generated into each virtual host log folder.
 Do not forget to update your `logrotate.d` script, for example:

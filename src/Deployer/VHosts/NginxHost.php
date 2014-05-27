@@ -32,7 +32,7 @@ class NginxHost extends AbstractHostFile
 				'phpmyadmin_install'=> (boolean)$mainConf['phpmyadmin_install']
 			);
 
-			return $this->generateFile($this->vhostFile, 'nginx.example.com', $vars);
+			return $this->generateFile($this->vhostFile, 'nginx.example.conf', $vars);
 		}
 
 		return false;

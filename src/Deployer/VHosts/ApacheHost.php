@@ -35,7 +35,7 @@ class ApacheHost extends AbstractHostFile
 				'rzcms_install'=> (boolean)$mainConf['use_rzcms']
 			);
 
-			return $this->generateFile($this->vhostFile, 'apache2.example.com', $vars);
+			return $this->generateFile($this->vhostFile, 'apache2.example.conf', $vars);
 		}
 
 		return false;
