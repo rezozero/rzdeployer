@@ -40,9 +40,7 @@ class UnixUser {
 		 * Additionnal groups
 		 */
 		$groups = array();
-		if (!empty($mainConf["webserver_group"])) {
-			$groups[] = $mainConf["webserver_group"];
-		}
+		
 		if (!empty($mainConf["allowssh_group"])) {
 			$groups[] = $mainConf["allowssh_group"];
 		}
