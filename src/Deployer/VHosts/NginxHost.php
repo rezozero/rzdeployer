@@ -26,6 +26,7 @@ class NginxHost extends AbstractHostFile
 			
 			$vars = array(
 				'datetime'=>	  time(),
+				'username'=>      Kernel::getInstance()->getUser()->getName(),
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,
 				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
