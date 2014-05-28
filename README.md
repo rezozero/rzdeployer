@@ -9,7 +9,6 @@ We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-u
 * Create a system user for each virtual host and generate a random password
 * Create a home folder into your webserver root path (ex: /var/www/vhosts)
 * Create a MySQL user and database
-* Create a PHP FPM socket file into your user home
 * Create a virtual host config file (apache2 or nginx) in your sites-available
 * Create a symlink into your site-enabled folder
 * _Restart webserver_
@@ -86,7 +85,6 @@ RZ Deployer will generate the following file tree in your webserver root :
         * access.log
         * error.log
         * fpm-error.log
-    * php5-fpm.sock *[root:root:0666]*
     * **/private** *[user:user:0755]*
         * **/backups**
         * **/git**

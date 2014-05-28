@@ -109,14 +109,6 @@ class UnixUser {
 			chown($this->homeFolder, $mainConf['webserver_group']);
 			chgrp($this->homeFolder, $this->username);
 			chmod($this->homeFolder, 0750);
-			
-			/*
-			 * Create the php-fpm socket
-			 */
-			touch($this->homeFolder."/php5-fpm.sock");
-			chown($this->homeFolder."/php5-fpm.sock", "root");
-			chgrp($this->homeFolder."/php5-fpm.sock", "root");
-			chmod($this->homeFolder."/php5-fpm.sock", 0666);
 
 			// Create special log folder 
 			$this->createFolder($this->homeFolder."/log");
