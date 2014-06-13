@@ -18,7 +18,6 @@ class UnixUser {
 
 	private $username;
 	private $password;
-	private $userGroup;
 	private $homeFolder;
 
 	public function __construct( $username ){
@@ -32,7 +31,6 @@ class UnixUser {
 	public function createUser()
 	{
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
-		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
 		$results = null;		
 
@@ -49,17 +47,14 @@ class UnixUser {
 		 * Create user without password
 		 */
 		$query = "useradd --home ".$this->homeFolder." -m";
-		//$query .= " -p ".$this->password;
 		if (count($groups) > 0) {
 			$query .= " -G ".implode(',', $groups);
 		}
 		$query .= " -s /bin/bash";
 		$query .= " ".$this->username;
-		//var_dump($query);
 
 		exec($query, $results);
 		if (count($results) > 0) {
-			var_dump($results);
 			echo "[ERROR] Unable to create unix user.".PHP_EOL;
 			return false;
 		}
@@ -68,10 +63,8 @@ class UnixUser {
 		 * Add password
 		 */
 		$pwQuery = 'usermod -p '.Password::encrypt($this->password).' '.$this->username;
-		//var_dump($pwQuery);
 		exec($pwQuery, $pwResults);
 		if (count($pwResults) > 0) {
-			var_dump($pwResults);
 			echo "[ERROR] Unable to set unix user password.".PHP_EOL;
 			return false;
 		}

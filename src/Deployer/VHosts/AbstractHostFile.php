@@ -22,7 +22,6 @@ abstract class AbstractHostFile
 
 	public function enableVirtualHost(){
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
-		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
 		if (file_exists($this->vhostFile) && 
 			is_writable($mainConf['vhosts_enabled_path'])) {

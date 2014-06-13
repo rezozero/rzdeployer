@@ -19,7 +19,7 @@ namespace rezozero\Deployer\Controllers;
 class RZCMSInstaller
 {
 	
-	function __construct(argument)
+	function __construct()
 	{
 		# code...
 	}

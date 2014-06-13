@@ -6,7 +6,6 @@ namespace rezozero\Deployer\Controllers;
 use rezozero\Deployer\Controllers\Configuration;
 use rezozero\Deployer\Controllers\UnixUser;
 use rezozero\Deployer\Controllers\Database;
-use rezozero\Deployer\Controllers\Password;
 use rezozero\Deployer\Controllers\Color;
 /**
 * 

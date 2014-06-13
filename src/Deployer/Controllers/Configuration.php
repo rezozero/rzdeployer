@@ -19,8 +19,6 @@ class Configuration
 	private $config;
 	private $hostname;
 	private $username;
-	private $password;
-	private $notifyEmail;
 
 	public static $serverAvailable = array(
 		'apache2',
