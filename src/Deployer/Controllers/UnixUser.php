@@ -1,9 +1,9 @@
-<?php 
+<?php
 /**
  * Copyright REZO ZERO 2014
- * 
- * 
- * 
+ *
+ *
+ *
  *
  * @file UnixUser.php
  * @copyright REZO ZERO 2014
@@ -32,13 +32,13 @@ class UnixUser {
 	{
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
-		$results = null;		
+		$results = null;
 
 		/*
 		 * Additionnal groups
 		 */
 		$groups = array();
-		
+
 		if (!empty($mainConf["allowssh_group"])) {
 			$groups[] = $mainConf["allowssh_group"];
 		}
@@ -91,7 +91,7 @@ class UnixUser {
 	}
 
 	public function createFileStructure()
-	{	
+	{
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
 		if (chdir($this->homeFolder) !== false) {
@@ -103,7 +103,7 @@ class UnixUser {
 			chgrp($this->homeFolder, $this->username);
 			chmod($this->homeFolder, 0750);
 
-			// Create special log folder 
+			// Create special log folder
 			$this->createFolder($this->homeFolder."/log");
 			chown($this->homeFolder."/log", $this->username);
 			chgrp($this->homeFolder."/log", "root");

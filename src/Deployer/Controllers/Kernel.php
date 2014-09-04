@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 
 namespace rezozero\Deployer\Controllers;
@@ -8,9 +8,9 @@ use rezozero\Deployer\Controllers\UnixUser;
 use rezozero\Deployer\Controllers\Database;
 use rezozero\Deployer\Controllers\Color;
 /**
-* 
+*
 */
-class Kernel 
+class Kernel
 {
 	private static $instance = null;
 
@@ -24,7 +24,7 @@ class Kernel
 	private $mail;
 
 	private function __construct(){
-		
+
 		$this->configuration = new Configuration();
 		$this->twigLoader = new \Twig_Loader_Filesystem(APP_ROOT.'/views');
 		$this->twig = new \Twig_Environment($this->twigLoader);
@@ -43,7 +43,7 @@ class Kernel
 	}
 
 	public function run()
-	{	
+	{
 		echo $this->getSplash();
 
 		if ($this->configuration->setConfigFile( APP_ROOT.'/conf/config.json' ) !== false) {
@@ -69,10 +69,10 @@ class Kernel
 					 * Check if files already exist
 					 */
 					if (!$this->unixUser->userExists() &&
-						$this->vhost->isWritable() &&  
-						!$this->vhost->virtualHostExists() && 
+						$this->vhost->isWritable() &&
+						!$this->vhost->virtualHostExists() &&
 						!$this->vhost->poolFileExists()) {
-						
+
 						/*
 						 * Begin creation
 						 */
@@ -136,7 +136,7 @@ class Kernel
 	public function getSplash()
 	{
 		$msg = "";
-		for ($i=0; $i < 22; $i++) { 
+		for ($i=0; $i < 22; $i++) {
 			$msg .= $this->getColor()->getColoredString("|", 'green', 'green');
 			$msg .= $this->getColor()->getColoredString("|", 'green', 'white');
 		}
@@ -147,7 +147,7 @@ class Kernel
 		$msg .= $this->getColor()->getColoredString("              REZO ZERO                      ", 'black', 'green').PHP_EOL;
 		$msg .= $this->getColor()->getColoredString("              Ambroise Maupate               ", 'black', 'green').PHP_EOL;
 		$msg .= $this->getColor()->getColoredString("                                             ", 'black', 'green').PHP_EOL;
-		for ($i=0; $i < 22; $i++) { 
+		for ($i=0; $i < 22; $i++) {
 			$msg .= $this->getColor()->getColoredString("|", 'green', 'green');
 			$msg .= $this->getColor()->getColoredString("|", 'green', 'white');
 		}
@@ -190,7 +190,7 @@ class Kernel
 	 * Send a mail summary for you setup
 	 */
 	public function mailSummary()
-	{	
+	{
 		$confData = $this->configuration->getData();
 
 		$summary = array(
@@ -214,12 +214,12 @@ class Kernel
 			)
 		);
 
-		if (filter_var($confData['sender_email'], FILTER_VALIDATE_EMAIL) !== false && 
+		if (filter_var($confData['sender_email'], FILTER_VALIDATE_EMAIL) !== false &&
 			filter_var($confData['notification_email'], FILTER_VALIDATE_EMAIL) !== false) {
 
 			$this->mail->From = $confData['sender_email'];
 			$this->mail->FromName = "RZ Deployer";
-			$this->mail->addAddress($confData['notification_email']);     // Add a recipient    
+			$this->mail->addAddress($confData['notification_email']);     // Add a recipient
 			$this->mail->addReplyTo($confData['sender_email'], "RZ Deployer");
 
 			$this->mail->isHTML(true);                                  // Set email format to HTML

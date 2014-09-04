@@ -1,9 +1,9 @@
-<?php 
+<?php
 /**
  * Copyright REZO ZERO 2014
- * 
- * 
- * 
+ *
+ *
+ *
  *
  * @file NginxHost.php
  * @copyright REZO ZERO 2014
@@ -21,9 +21,9 @@ class NginxHost extends AbstractHostFile
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
-		if (is_writable($mainConf['vhosts_path']) && 
+		if (is_writable($mainConf['vhosts_path']) &&
 			!file_exists($this->vhostFile)) {
-			
+
 			$vars = array(
 				'datetime'=>	  time(),
 				'username'=>      Kernel::getInstance()->getUser()->getName(),

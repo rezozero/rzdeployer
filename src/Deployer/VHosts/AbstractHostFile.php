@@ -1,8 +1,8 @@
-<?php 
+<?php
 /**
  * Copyright REZO ZERO 2014
- * 
- * 
+ *
+ *
  *
  *
  * @file AbstractHostFile.php
@@ -23,7 +23,7 @@ abstract class AbstractHostFile
 	public function enableVirtualHost(){
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
-		if (file_exists($this->vhostFile) && 
+		if (file_exists($this->vhostFile) &&
 			is_writable($mainConf['vhosts_enabled_path'])) {
 
 			return symlink( $this->vhostFile , $mainConf['vhosts_enabled_path'].'/'.Kernel::getInstance()->getUser()->getName().".conf" );
@@ -31,16 +31,16 @@ abstract class AbstractHostFile
 
 		return false;
 	}
-	
+
 	public function generatePHPPool(){
 
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 		$hostname = Kernel::getInstance()->getConfiguration()->getHostname();
 
 
-		if (is_writable($mainConf['phpfpm_pools_path']) && 
+		if (is_writable($mainConf['phpfpm_pools_path']) &&
 			!file_exists($this->poolFile)) {
-			
+
 			$vars = array(
 				'datetime'=>	    time(),
 				'username'=>        Kernel::getInstance()->getUser()->getName(),
@@ -56,7 +56,7 @@ abstract class AbstractHostFile
 	}
 
 	public function restartServers(){
-		
+
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
 		switch ($mainConf['webserver_type']) {
@@ -71,7 +71,7 @@ abstract class AbstractHostFile
 	}
 
 	public function __construct(){
-		
+
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 		$this->vhostFile = $mainConf['vhosts_path']."/".Kernel::getInstance()->getUser()->getName().".conf";
 		$this->poolFile = $mainConf['phpfpm_pools_path']."/".Kernel::getInstance()->getUser()->getName().".conf";
@@ -103,8 +103,8 @@ abstract class AbstractHostFile
 	{
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
-		return is_writable($mainConf['vhosts_enabled_path']) && 
-		       is_writable($mainConf['vhosts_path']) && 
+		return is_writable($mainConf['vhosts_enabled_path']) &&
+		       is_writable($mainConf['vhosts_path']) &&
 		       is_writable($mainConf['phpfpm_pools_path']);
 	}
 	/**

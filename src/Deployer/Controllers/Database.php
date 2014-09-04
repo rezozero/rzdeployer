@@ -1,9 +1,9 @@
-<?php 
+<?php
 /**
  * Copyright REZO ZERO 2014
- * 
- * 
- * 
+ *
+ *
+ *
  *
  * @file Database.php
  * @copyright REZO ZERO 2014
