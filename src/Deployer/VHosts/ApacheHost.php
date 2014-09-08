@@ -32,7 +32,8 @@ class ApacheHost extends AbstractHostFile
 				'username'=>      Kernel::getInstance()->getUser()->getName(),
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,
-				'rzcms_install'=> (boolean)$mainConf['use_rzcms']
+				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
+				'use_rzcms'=> (boolean)$mainConf['use_rzcms']
 			);
 
 			return $this->generateFile($this->vhostFile, 'apache2.example.conf', $vars);

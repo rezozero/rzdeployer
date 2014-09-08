@@ -30,6 +30,7 @@ class NginxHost extends AbstractHostFile
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,
 				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
+				'use_rzcms'=> (boolean)$mainConf['use_rzcms'],
 				'phpmyadmin_install'=> (boolean)$mainConf['phpmyadmin_install']
 			);
 
