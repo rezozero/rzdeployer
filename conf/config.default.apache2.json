@@ -11,7 +11,10 @@
 	"use_rzcms":            true,
 	"use_index_entrypoint": true,
 	"sender_email":   		"sender@test.com",
-	"notification_email":   "test@test.com",
+	"notification_email":   [
+		"test@test.com",
+		"test2@test.com"
+	],
 	"mysql_host":           "localhost",
 	"mysql_user":           "root",
 	"mysql_password":       "*******",

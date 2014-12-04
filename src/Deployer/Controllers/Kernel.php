@@ -113,13 +113,10 @@ class Kernel
 				else {
 					echo $this->getColor()->getColoredString("[ERROR] Unable to get Virtual Host writer class.", 'red', null).PHP_EOL;
 				}
-
-				return false;
 			}
 		}
 		else {
 			echo "[ERROR] Unable to load configuration file (".APP_ROOT."/conf/config.json).".PHP_EOL;
-			exit;
 		}
 	}
 
@@ -214,12 +211,21 @@ class Kernel
 			)
 		);
 
-		if (filter_var($confData['sender_email'], FILTER_VALIDATE_EMAIL) !== false &&
-			filter_var($confData['notification_email'], FILTER_VALIDATE_EMAIL) !== false) {
+		if (filter_var($confData['sender_email'], FILTER_VALIDATE_EMAIL) !== false) {
 
 			$this->mail->From = $confData['sender_email'];
 			$this->mail->FromName = "RZ Deployer";
-			$this->mail->addAddress($confData['notification_email']);     // Add a recipient
+
+			if (is_array($this->config['notification_email'])) {
+				foreach ($this->config['notification_email'] as $email) {
+					if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false) {
+						$this->mail->addAddress($email);     // Add a recipient
+					}
+				}
+			} elseif (filter_var($confData['notification_email'], FILTER_VALIDATE_EMAIL) !== false) {
+				$this->mail->addAddress($confData['notification_email']);     // Add a recipient
+			}
+
 			$this->mail->addReplyTo($confData['sender_email'], "RZ Deployer");
 
 			$this->mail->isHTML(true);                                  // Set email format to HTML
