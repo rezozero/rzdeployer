@@ -216,8 +216,8 @@ class Kernel
 			$this->mail->From = $confData['sender_email'];
 			$this->mail->FromName = "RZ Deployer";
 
-			if (is_array($this->config['notification_email'])) {
-				foreach ($this->config['notification_email'] as $email) {
+			if (is_array($confData['notification_email'])) {
+				foreach ($confData['notification_email'] as $email) {
 					if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false) {
 						$this->mail->addAddress($email);     // Add a recipient
 					}
