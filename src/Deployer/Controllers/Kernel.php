@@ -216,14 +216,18 @@ class Kernel
 			$this->mail->From = $confData['sender_email'];
 			$this->mail->FromName = "RZ Deployer";
 
+			$emails = "";
+
 			if (is_array($confData['notification_email'])) {
 				foreach ($confData['notification_email'] as $email) {
 					if (filter_var($email, FILTER_VALIDATE_EMAIL) !== false) {
 						$this->mail->addAddress($email);     // Add a recipient
+						$emails .= $email.", ";
 					}
 				}
 			} elseif (filter_var($confData['notification_email'], FILTER_VALIDATE_EMAIL) !== false) {
 				$this->mail->addAddress($confData['notification_email']);     // Add a recipient
+				$emails .= $confData['notification_email'];
 			}
 
 			$this->mail->addReplyTo($confData['sender_email'], "RZ Deployer");
@@ -238,7 +242,7 @@ class Kernel
 			    echo $this->getColor()->getColoredString('Message could not be sent.').PHP_EOL;
 			    echo $this->getColor()->getColoredString('Mailer Error: ' . $this->mail->ErrorInfo).PHP_EOL;
 			} else {
-			    echo Kernel::getInstance()->getColor()->getColoredString('Summary message has been sent to '.$confData['notification_email'], null, 'green').PHP_EOL.PHP_EOL;
+			    echo Kernel::getInstance()->getColor()->getColoredString('Summary message has been sent to '.$emails, null, 'green').PHP_EOL.PHP_EOL;
 			}
 		}
 	}
