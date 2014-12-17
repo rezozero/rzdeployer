@@ -1,6 +1,7 @@
 {
 	"webserver_root":       "/var/www/vhosts",
 	"webserver_group":      "www-data",
+	"vhost_root":           "htdocs",
 	"vhosts_path":       	"/etc/nginx/sites-available",
 	"vhosts_enabled_path":  "/etc/nginx/sites-enabled",
 	"phpfpm_enabled":       true,

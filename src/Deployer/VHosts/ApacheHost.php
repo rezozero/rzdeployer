@@ -29,6 +29,7 @@ class ApacheHost extends AbstractHostFile
 				'mpm_itk'=>       (boolean)$mainConf['mpm_itk'],
 				'phpfpm_enabled'=>(boolean)$mainConf['phpfpm_enabled'], // You can choose a regular apache config
 				'email'=>      	  $mainConf['notification_email'],
+				'vhost_root'=>    (!empty($mainConf['vhost_root']) ? $mainConf['vhost_root'] : 'htdocs'),
 				'username'=>      Kernel::getInstance()->getUser()->getName(),
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,

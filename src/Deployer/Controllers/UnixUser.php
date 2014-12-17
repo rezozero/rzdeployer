@@ -19,6 +19,7 @@ class UnixUser {
 	private $username;
 	private $password;
 	private $homeFolder;
+	private $vhostRoot;
 
 	public function __construct( $username ){
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
@@ -26,6 +27,8 @@ class UnixUser {
 		$this->username =   $username;
 		$this->password =   Password::generate(8);
 		$this->homeFolder = $mainConf["webserver_root"]."/".Kernel::getInstance()->getConfiguration()->getHostname();
+
+		$this->vhostRoot = (!empty($mainConf['vhost_root']) ? $mainConf['vhost_root'] : 'htdocs');
 	}
 
 	public function createUser()
@@ -110,7 +113,7 @@ class UnixUser {
 			chmod($this->homeFolder."/log", 0770);
 
 			// Create user folders
-			$this->createFolder($this->homeFolder."/htdocs");
+			$this->createFolder($this->homeFolder."/".$this->vhostRoot);
 			$this->createFolder($this->homeFolder."/private");
 			$this->createFolder($this->homeFolder."/private/git");
 			$this->createFolder($this->homeFolder."/private/backup");
@@ -126,10 +129,10 @@ class UnixUser {
 			chmod($this->homeFolder."/.ssh", 0700);
 
 			// Create test file
-			file_put_contents($this->homeFolder."/htdocs/index.php", "<?php phpinfo(); ?>");
-			chown($this->homeFolder."/htdocs/index.php", $this->username);
-			chgrp($this->homeFolder."/htdocs/index.php", $this->username);
-			chmod($this->homeFolder."/htdocs/index.php", 0644);
+			file_put_contents($this->homeFolder."/".$this->vhostRoot."/index.php", "<?php phpinfo(); ?>");
+			chown($this->homeFolder."/".$this->vhostRoot."/index.php", $this->username);
+			chgrp($this->homeFolder."/".$this->vhostRoot."/index.php", $this->username);
+			chmod($this->homeFolder."/".$this->vhostRoot."/index.php", 0644);
 
 			return true;
 		}
