@@ -37,6 +37,11 @@ class ApacheHost extends AbstractHostFile
 				'use_rzcms'=> (boolean)$mainConf['use_rzcms']
 			);
 
+			if (is_array($mainConf['notification_email']) &&
+				!empty($mainConf['notification_email'][0])) {
+				$vars['email'] = $mainConf['notification_email'][0];
+			}
+
 			return $this->generateFile($this->vhostFile, 'apache2.example.conf', $vars);
 		}
 
