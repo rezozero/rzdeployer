@@ -25,7 +25,7 @@ Before processing, RZ Deployer will ask for:
 * A username
 
 MySQL username and database name will be named after the system user.
-MySQL username could be truncated is too long, but it will be displayed in final notification email.
+MySQL username could be truncated if it's too long, but it will be displayed in final notification email.
 Virtual hosts files and home folder will named after your server name.
 
 ## How to use it
