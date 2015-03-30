@@ -1,8 +1,8 @@
 {
 	"name": "rezozero/rzdeployer",
 	"description": "A simple PHP command-line tool to create virtual hosts and create essential webserver files.",
-	"version": "0.8.1",
-    "license":"CC-BY-3.0",
+	"version": "0.8.2",
+    "license":"MIT",
     "authors": [
         {
             "name": "Ambroise Maupate",

@@ -34,7 +34,8 @@ class ApacheHost extends AbstractHostFile
 				'rootPath'=>      Kernel::getInstance()->getUser()->getHome(),
 				'hostname'=>      $hostname,
 				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
-				'use_rzcms'=> (boolean)$mainConf['use_rzcms']
+				'use_rzcms'=> (boolean)$mainConf['use_rzcms'],
+				'use_roadiz'=>    (boolean)$mainConf['use_roadiz']
 			);
 
 			if (is_array($mainConf['notification_email']) &&

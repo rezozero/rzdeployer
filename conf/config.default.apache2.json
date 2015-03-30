@@ -9,7 +9,8 @@
 	"phpmyadmin_install":   false,
 	"mpm_itk":              false,
 	"webserver_type":       "apache2",
-	"use_rzcms":            true,
+	"use_rzcms":            false,
+	"use_roadiz":           true,
 	"use_index_entrypoint": true,
 	"sender_email":   		"sender@test.com",
 	"notification_email":   [

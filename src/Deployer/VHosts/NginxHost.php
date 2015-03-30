@@ -31,7 +31,8 @@ class NginxHost extends AbstractHostFile
 				'hostname'=>      $hostname,
 				'vhost_root'=>    (!empty($mainConf['vhost_root']) ? $mainConf['vhost_root'] : 'htdocs'),
 				'rzcms_install'=> (boolean)$mainConf['use_rzcms'],
-				'use_rzcms'=> (boolean)$mainConf['use_rzcms'],
+				'use_rzcms'=>     (boolean)$mainConf['use_rzcms'],
+				'use_roadiz'=>    (boolean)$mainConf['use_roadiz'],
 				'phpmyadmin_install'=> (boolean)$mainConf['phpmyadmin_install']
 			);
 
