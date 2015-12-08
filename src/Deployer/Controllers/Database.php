@@ -21,7 +21,7 @@ class Database {
 
 	public function __construct( $username ) {
 		$this->dbUsername = substr($username, 0, 15);
-		$this->dbPassword = Password::generate(8);
+		$this->dbPassword = Password::generate(14);
 	}
 
 	public function createUserDatabase()

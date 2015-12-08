@@ -25,7 +25,7 @@ class UnixUser {
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
 		$this->username =   $username;
-		$this->password =   Password::generate(8);
+		$this->password =   Password::generate(14);
 		$this->homeFolder = $mainConf["webserver_root"]."/".Kernel::getInstance()->getConfiguration()->getHostname();
 
 		$this->vhostRoot = (!empty($mainConf['vhost_root']) ? $mainConf['vhost_root'] : 'htdocs');
@@ -127,6 +127,12 @@ class UnixUser {
 			 */
 			$this->createFolder($this->homeFolder."/.ssh");
 			chmod($this->homeFolder."/.ssh", 0700);
+
+			/*
+			 * Create composer cache folder
+			 */
+			$this->createFolder($this->homeFolder."/.composer");
+			chmod($this->homeFolder."/.composer", 0700);
 
 			// Create test file
 			file_put_contents($this->homeFolder."/".$this->vhostRoot."/index.php", "<?php phpinfo(); ?>");
