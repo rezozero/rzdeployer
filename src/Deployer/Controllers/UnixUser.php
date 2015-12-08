@@ -49,14 +49,20 @@ class UnixUser {
 		/*
 		 * Create user without password
 		 */
-		$query = "useradd --home ".$this->homeFolder." -m";
-		if (count($groups) > 0) {
-			$query .= " -G ".implode(',', $groups);
-		}
-		$query .= " -s /bin/bash";
-		$query .= " ".$this->username;
+		$userQuery = array(
+			'useradd',
+			'--home '.$this->homeFolder,
+			'-m',
+			'-s /bin/bash'
+		);
 
-		exec($query, $results);
+		if (count($groups) > 0) {
+			$userQuery[] = "-G ".implode(',', $groups);
+		}
+
+		$userQuery[] = $this->username;
+
+		exec(implode(' ', $userQuery), $results);
 		if (count($results) > 0) {
 			echo "[ERROR] Unable to create unix user.".PHP_EOL;
 			return false;
@@ -98,7 +104,6 @@ class UnixUser {
 		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
 		if (chdir($this->homeFolder) !== false) {
-
 			/*
 			 * Change user home mod to 750 and writable by www-data
 			 */
@@ -107,16 +112,15 @@ class UnixUser {
 			chmod($this->homeFolder, 0750);
 
 			// Create special log folder
-			$this->createFolder($this->homeFolder."/log");
+			$this->createFolder($this->homeFolder."/log", 0770);
 			chown($this->homeFolder."/log", $this->username);
 			chgrp($this->homeFolder."/log", "root");
-			chmod($this->homeFolder."/log", 0770);
 
 			// Create user folders
 			$this->createFolder($this->homeFolder."/".$this->vhostRoot);
 			$this->createFolder($this->homeFolder."/private");
 			$this->createFolder($this->homeFolder."/private/git");
-			$this->createFolder($this->homeFolder."/private/backup");
+			$this->createFolder($this->homeFolder."/private/backup", 0700);
 
 			// Special folder to store your domain DKIM public and private keys
 			$this->createFolder($this->homeFolder."/private/dkim");
@@ -125,14 +129,27 @@ class UnixUser {
 			/*
 			 * SSH folder must be only read/writeable by user
 			 */
-			$this->createFolder($this->homeFolder."/.ssh");
-			chmod($this->homeFolder."/.ssh", 0700);
+			$this->createFolder($this->homeFolder."/.ssh", 0700);
+
+			/*
+			 * ssh-keygen -q -t rsa -N "" -C "comment" -f ~/.ssh/id_rsa
+			 */
+			$createSSHKeyQuery = array(
+				'ssh-keygen',
+				'-q',
+				'-t rsa',
+				'-N ""',
+				'-C "' . $this->username . '"',
+				'-f ' . $this->homeFolder . '/.ssh/id_rsa',
+			);
+			exec(implode(' ', $createSSHKeyQuery));
+			$this->ownPath($this->homeFolder . '/.ssh/id_rsa');
+			$this->ownPath($this->homeFolder . '/.ssh/id_rsa.pub');
 
 			/*
 			 * Create composer cache folder
 			 */
-			$this->createFolder($this->homeFolder."/.composer");
-			chmod($this->homeFolder."/.composer", 0700);
+			$this->createFolder($this->homeFolder."/.composer", 0700);
 
 			// Create test file
 			file_put_contents($this->homeFolder."/".$this->vhostRoot."/index.php", "<?php phpinfo(); ?>");
@@ -145,16 +162,20 @@ class UnixUser {
 		return false;
 	}
 
-	public function createFile( $path )
+	public function createFile($path, $mode = 0644)
 	{
 		touch($path);
-		chown($path, $this->username);
-		chgrp($path, $this->username);
-		chmod($path, 0644);
+		$this->ownPath($path);
+		chmod($path, $mode);
 	}
-	public function createFolder( $path )
+	public function createFolder($path, $mode = 0755)
 	{
-		mkdir($path, 0755, true );
+		mkdir($path, $mode, true);
+		$this->ownPath($path);
+	}
+
+	public function ownPath($path)
+	{
 		chown($path, $this->username);
 		chgrp($path, $this->username);
 	}
