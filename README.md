@@ -107,6 +107,8 @@ Do not forget to update your `logrotate.d` script, for example:
     daily
     missingok
     rotate 10
+    size 100M
+    su www-data www-data
     compress
     delaycompress
     notifempty
@@ -130,9 +132,10 @@ Do not forget to update your `logrotate.d` script, for example:
 <pre><code>
 # After existing content…
 /var/www/vhosts/*/log/fpm-php.log {
-    rotate 12
     weekly
+    rotate 12
     missingok
+    size 100M
     notifempty
     compress
     delaycompress
