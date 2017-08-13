@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+define('APP_ROOT', dirname(__DIR__));
+
+require(APP_ROOT . "/vendor/autoload.php");
+
+$user = trim(shell_exec('whoami'));
+if ($user != 'root') {
+    echo "[".$user."] — You must have super-user privileges to go on.".PHP_EOL;
+}
+else {
+    if( php_sapi_name() === 'cli' || defined('STDIN') ) {
+        $application = new \rezozero\Deployer\Application();
+        $application->run();
+    }
+    else {
+        echo "[".$user."] — You must invoke RZDeployer from commandline only.".PHP_EOL;
+    }
+}

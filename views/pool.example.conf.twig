@@ -1,9 +1,10 @@
+{% set fpm_version = fpm_version|default('5') %}
 [{{ username }}]
 
 user = {{ username }}
 group = {{ username }}
 
-listen = /var/run/php5-fpm-{{ username }}.sock
+listen = /var/run/php{{ fpm_version }}-fpm-{{ username }}.sock
 
 listen.owner = {{ webserver_group }}
 listen.group = {{ webserver_group }}

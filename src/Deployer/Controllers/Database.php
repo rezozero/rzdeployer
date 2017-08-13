@@ -11,55 +11,53 @@
  */
 namespace rezozero\Deployer\Controllers;
 
-use rezozero\Deployer\Controllers\Kernel;
-use rezozero\Deployer\Controllers\Password;
 
 class Database {
 
-	private $dbUsername;
-	private $dbPassword;
+    private $dbUsername;
+    private $dbPassword;
 
-	public function __construct( $username ) {
-		$this->dbUsername = substr($username, 0, 15);
-		$this->dbPassword = Password::generate(14);
-	}
+    public function __construct( $username )
+    {
+        $this->dbUsername = substr($username, 0, 15);
+        $this->dbPassword = Password::generate(14);
+    }
 
-	public function createUserDatabase()
-	{
-		$mainConf = Kernel::getInstance()->getConfiguration()->getData();
+    public function createUserDatabase()
+    {
+        $mainConf = Kernel::getInstance()->getConfiguration()->getData();
 
+        try {
 
-		try {
+            $dsn = $dsn = "mysql:host=".$mainConf['mysql_host'];
+            $pdo = new \PDO($dsn,$mainConf['mysql_user'],$mainConf['mysql_password']);
 
-			$dsn = $dsn = "mysql:host=".$mainConf['mysql_host'];
-	    	$pdo = new \PDO($dsn,$mainConf['mysql_user'],$mainConf['mysql_password']);
+            //Creation of user "user_name"
+            $pdo->query("CREATE USER '".$this->dbUsername."'@'".$mainConf['mysql_host']."' IDENTIFIED BY '".$this->dbPassword."';");
+            //Creation of database "new_db"
+            $pdo->query("CREATE DATABASE `".$this->dbUsername."`;");
+            //Adding all privileges on our newly created database
+            $pdo->query("GRANT ALL PRIVILEGES on `".$this->dbUsername."`.* TO '".$this->dbUsername."'@'".$mainConf['mysql_host']."';");
 
-	    	//Creation of user "user_name"
-	    	$pdo->query("CREATE USER '".$this->dbUsername."'@'".$mainConf['mysql_host']."' IDENTIFIED BY '".$this->dbPassword."';");
-	    	//Creation of database "new_db"
-	    	$pdo->query("CREATE DATABASE `".$this->dbUsername."`;");
-	    	//Adding all privileges on our newly created database
-	    	$pdo->query("GRANT ALL PRIVILEGES on `".$this->dbUsername."`.* TO '".$this->dbUsername."'@'".$mainConf['mysql_host']."';");
+            return true;
+        }
+        catch(\PDOException $e){
 
-	    	return true;
-		}
-		catch(\PDOException $e){
+            echo "[ERROR] ".$e->getMessage().PHP_EOL;
+            return false;
+        }
+    }
 
-			echo "[ERROR] ".$e->getMessage().PHP_EOL;
-			return false;
-		}
-	}
-
-	public function getDatabase()
-	{
-		return $this->dbUsername;
-	}
-	public function getUser()
-	{
-		return $this->dbUsername;
-	}
-	public function getPassword()
-	{
-		return $this->dbPassword;
-	}
+    public function getDatabase()
+    {
+        return $this->dbUsername;
+    }
+    public function getUser()
+    {
+        return $this->dbUsername;
+    }
+    public function getPassword()
+    {
+        return $this->dbPassword;
+    }
 }

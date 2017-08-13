@@ -12,13 +12,25 @@
 #     return 301 $scheme://{{ hostname }}$request_uri;
 # }
 
+{% set fpm_version = fpm_version|default('5') %}
+{% set main_script = 'index' %}
+{% if use_symfony %}
+    {% set main_script = 'app' %}
+{% endif %}
+
+
 # Main domain virtual host
 server {
     listen   80; ## listen for ipv4; this line is default and implied
     listen   [::]:80; ## listen for ipv6
 
-    root {{ rootPath }}/{{ vhost_root }};
-    index index.php index.html index.htm;
+    {% if use_roadiz_se or use_symfony %}
+        root {{ rootPath }}/{{ vhost_root }}/web;
+    {% else %}
+        root {{ rootPath }}/{{ vhost_root }};
+    {% endif %}
+
+    index {{ main_script }}.php index.html index.htm;
 
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-XSS-Protection "1; mode=block";
@@ -36,20 +48,20 @@ server {
 
     # Use Front-end controller pattern for RZ-CMS, Wordpress and others CMS…
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files $uri $uri/ /{{ main_script }}.php?$query_string;
     }
 
     # Don't log robots.txt or favicon.ico files
     location = /favicon.ico { log_not_found off; access_log off; }
     location = /robots.txt  { allow all; access_log off; log_not_found off; }
 
-    {% if use_roadiz %}
+    {% if use_roadiz or use_symfony %}
     location ~ /themes/(.+)\.(php|yml|twig|xlf|rzn|rzt|rzg)$ {
         deny all;
     }
 
     # Enable Expire on Themes public assets
-    location ~* ^/themes/*.*\.(?:ico|css|js|woff2?|eot|ttf|otf|svg|gif|jpe?g|png)$ {
+    location ~* ^/(themes|bundles)/*.*\.(?:ico|css|js|woff2?|eot|ttf|otf|svg|gif|jpe?g|png)$ {
         expires 30d;
         access_log off;
         add_header Pragma "public";
@@ -87,15 +99,15 @@ server {
     #
     # Production entry point.
     #
-    location ~ ^/index\.php(/|$) {
+    location ~ ^/{{ main_script }}\.php(/|$) {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
         # With php5-fpm:
-        fastcgi_pass unix:/var/run/php5-fpm-{{ username }}.sock;
+        fastcgi_pass unix:/var/run/php{{ fpm_version }}-fpm-{{ username }}.sock;
         include fastcgi_params;
         # Prevents URIs that include the front controller. This will 404:
-        # http://domain.tld/app.php/some-path
+        # http://domain.tld/{{ main_script }}.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
@@ -105,20 +117,20 @@ server {
     #
     # In production server, don't deploy dev.php or install.php
     #
-    location ~ ^/(dev|install|preview)\.php(/|$) {
+    location ~ ^/(dev|install|preview|clear_cache)\.php(/|$) {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
         # With php5-fpm:
-        fastcgi_pass unix:/var/run/php5-fpm-{{ username }}.sock;
+        fastcgi_pass unix:/var/run/php{{ fpm_version }}-fpm-{{ username }}.sock;
         include fastcgi_params;
     }
     {% else %}
     # pass the PHP scripts to FastCGI server
-    # listening on {{ rootPath }}/php5-fpm.sock
+    # listening on {{ rootPath }}/php{{ fpm_version }}-fpm.sock
     location ~ \.php$ {
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/var/run/php5-fpm-{{ username }}.sock;
+        fastcgi_pass unix:/var/run/php{{ fpm_version }}-fpm-{{ username }}.sock;
         fastcgi_index index.php;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
@@ -206,7 +218,7 @@ server {
             try_files $uri =404;
             root /usr/share/;
             # Use default pool
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_pass unix:/var/run/php{{ fpm_version }}-fpm.sock;
             fastcgi_index index.php;
             include fastcgi_params;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;

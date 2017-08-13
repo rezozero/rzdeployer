@@ -1,24 +1,24 @@
 {
-	"webserver_root":       "/var/www/vhosts",
-	"webserver_group":      "www-data",
-	"vhost_root":           "htdocs",
-	"vhosts_path":       	"/etc/nginx/sites-available",
-	"vhosts_enabled_path":  "/etc/nginx/sites-enabled",
-	"phpfpm_enabled":       true,
-	"phpfpm_pools_path":    "/etc/php5/fpm/pool.d",
-	"phpmyadmin_install":   false,
-	"mpm_itk":              false,
-	"webserver_type":       "nginx",
-	"use_rzcms":            false,
-	"use_roadiz":           true,
-	"use_index_entrypoint": true,
-	"sender_email":   		"sender@test.com",
-	"notification_email":   [
-		"test@test.com",
-		"test2@test.com"
-	],
-	"mysql_host":           "localhost",
-	"mysql_user":           "root",
-	"mysql_password":       "*******",
-	"allowssh_group":		""
+    "webserver_root":       "/var/www/vhosts",
+    "webserver_group":      "www-data",
+    "vhost_root":           "htdocs",
+    "vhosts_path":          "/etc/nginx/sites-available",
+    "vhosts_enabled_path":  "/etc/nginx/sites-enabled",
+    "phpfpm_enabled":       true,
+    "phpfpm_pools_path":    "/etc/php5/fpm/pool.d",
+    "phpmyadmin_install":   false,
+    "mpm_itk":              false,
+    "webserver_type":       "nginx",
+    "use_rzcms":            false,
+    "use_roadiz":           true,
+    "use_index_entrypoint": true,
+    "sender_email":         "sender@test.com",
+    "notification_email":   [
+        "test@test.com",
+        "test2@test.com"
+    ],
+    "mysql_host":           "localhost",
+    "mysql_user":           "root",
+    "mysql_password":       "*******",
+    "allowssh_group":       ""
 }
