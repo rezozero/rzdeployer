@@ -11,24 +11,42 @@
  */
 namespace rezozero\Deployer\Controllers;
 
-class Password {
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
-    public static function encrypt( $password )
+class Password
+{
+    /**
+     * @param $password
+     * @return string
+     */
+    public function encrypt($password)
     {
-        $results = null;
-        exec('openssl passwd -crypt "'.$password.'"', $results);
+        $process = new Process('openssl passwd -crypt "'.$password.'"');
+        $process->run();
 
-        return $results[0];
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process->getOutput();
     }
 
-    public static function generate( $length = 8 )
+    /**
+     * @param int $length
+     * @return mixed
+     */
+    public function generate($length = 8)
     {
         //cat /dev/urandom| tr -dc 'a-zA-Z0-9' | fold -w 12| head -n 1
-        $results = array();
-        $query = "openssl rand -base64 36 | tr -dc 'a-zA-Z0-9\-\_\\$\@' | fold -w ".(int)$length." | head -n 1";
 
-        exec($query, $results);
-
-        return $results[0];
+        $process = new Process("openssl rand -base64 36 | tr -dc 'a-zA-Z0-9\-\_\\$\@' | fold -w ".(int)$length." | head -n 1");
+        $process->run();
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+        return $process->getOutput();
     }
 }

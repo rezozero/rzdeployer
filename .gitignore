@@ -1,6 +1,7 @@
-vendor/*
-node_modules
-conf/config.json
-adddomain.php
-composer.phar
+/vendor/*
+/node_modules
+/conf/config.json
+/conf/config.yml
+/adddomain.php
+/composer.phar
 .subl*
