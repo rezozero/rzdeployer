@@ -3,9 +3,11 @@
 
 namespace rezozero\Deployer;
 
+use rezozero\Deployer\Commands\CreateApplicationCommand;
 use rezozero\Deployer\Commands\CreateDatabaseUserCommand;
 use rezozero\Deployer\Commands\CreateUnixUserCommand;
 use rezozero\Deployer\Commands\DropDatabaseUserCommand;
+use rezozero\Deployer\Commands\RemoveApplicationCommand;
 
 class Application extends \Symfony\Component\Console\Application
 {
@@ -34,6 +36,8 @@ class Application extends \Symfony\Component\Console\Application
             new CreateUnixUserCommand(),
             new CreateDatabaseUserCommand(),
             new DropDatabaseUserCommand(),
+            new CreateApplicationCommand(),
+            new RemoveApplicationCommand(),
         ]);
     }
 }

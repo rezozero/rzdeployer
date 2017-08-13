@@ -13,9 +13,6 @@ We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-u
 * Create a MySQL user and database
 * Create a virtual host config file (apache2 or nginx) in your sites-available
 * Create a symlink into your site-enabled folder
-* _Restart webserver_
-* Notify by email
-* Clone and install a RZ-CMS instance (optional)
 
 ## Input
 
@@ -33,12 +30,11 @@ Virtual hosts files and home folder will named after your server name.
 * Clone current repository and `cd rzdeployer`
 * Install *Composer* : `curl -sS https://getcomposer.org/installer | php`
 * Run `php composer.phar install` to install dependencies and create the *autoloader*
-* Copy `conf/config.default.apache2.json` or `conf/config.default.nginx.json` to `conf/config.json`
+* Copy `conf/config.homebrew.yml` or `conf/config.default.yml` to `conf/config.yml`
 * Edit your own configuration
-* Be sure to have at least PHP 5.4 installed in CLI mode.
-* Run `sudo php app.php` (RZ Deployer must be run as super-user)
+* Be sure to have at least PHP 5.6 installed in CLI mode.
+* Run `bin/deployer` (RZ Deployer may be run as super-user when creating users)
 * Follow instructions
-* If you chose to install RZCMS, you must have access to private REZO ZERO Git repository (a password will be requested)
 
 ### Apache and PHP-FPM
 
@@ -56,25 +52,7 @@ RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure they are c
 
 ## Configuration
 
-Parameter                | Default value                | Description
--------------------------|------------------------------| ------------
-`webserver_root` 	     | /var/www/vhosts              | System folder in which virtual host home folder will be created
-`webserver_group` 	     | www-data                     | Owner of Apache or Nginx processes (User and Group)
-`vhosts_path` 	         | /etc/apache2/sites-available | Webserver virtual host file repository
-`vhosts_enabled_path`    | /etc/apache2/sites-enabled   | Activated virtual host symlinks folder
-`phpfpm_enabled` 	     | *false* or *true* for nginx  | Use php-fpm with apache2 (forced *true* with Nginx)
-`phpfpm_pools_path` 	 | /etc/php5/fpm/pool.d         | PHP-FPM pools repository folder
-`phpmyadmin_install`     | false                        | Insert a special location in your nginx vhost for phpmyadmin (false by default, you'd prefer using a unique URL for every vhosts with HTTPS connexion)
-`mpm_itk`                | *false*                      | A quick and dirty way to enable *per-user* apache processes. No need for php-fpm but it’s not the same performances and security.
-`webserver_type` 	     | *apache2*  or *nginx*        | Webserver engine (*Nginx recommanded*)
-`use_rzcms` 	         | false                        | Clone RZ-CMS and configure virtual hosts to enable RZ-CMS on your website
-`use_index_entrypoint`   | false                        | No implemented yet
-`sender_email` 	         | sender@test.com              | Sender email address for notifications
-`notification_email` 	 | test@test.com                | Final email address to receive summary
-`mysql_host` 	         | localhost                    | MySQL server host address
-`mysql_user` 	         | root                         | MySQL super-user name
-`mysql_password` 	     | ************                 | MySQL super-user password
-`allowssh_group` 	     | sshusers                     | Additional unix group for your virtual host user
+Check `conf/config.default.yml`.
 
 ## Files
 

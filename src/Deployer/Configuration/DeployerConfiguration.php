@@ -17,11 +17,6 @@ class DeployerConfiguration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('deployer');
 
         $rootNode
-            ->children()
-                ->booleanNode('sudo')
-                ->isRequired()
-                ->end()
-            ->end()
             ->append($this->addDatabaseNode())
             ->append($this->addUserNode())
             ->append($this->addPhpNode())
@@ -80,6 +75,9 @@ class DeployerConfiguration implements ConfigurationInterface
                     ->info('Name your server root name for each user.')
                     ->defaultValue("htdocs")
                 ->end()
+                ->integerNode('password_length')
+                    ->defaultValue(12)
+                ->end()
             ->end();
 
         return $rootNode;
@@ -101,6 +99,10 @@ class DeployerConfiguration implements ConfigurationInterface
                     ->info('Path where PHP-FPM pool files are stored.')
                     ->defaultValue("/etc/php/7.0/fpm/pool.d")
                 ->end()
+                ->scalarNode('socket_path')
+                    ->info('Path where PHP-FPM socket files are created.')
+                    ->defaultValue("/var/run")
+                ->end()
             ->end();
 
         return $rootNode;
@@ -116,8 +118,16 @@ class DeployerConfiguration implements ConfigurationInterface
             ->children()
                 ->enumNode('type')
                     ->info('Webserver type.')
-                    ->values(['apache2', 'nginx'])
+                    ->values(['apache22', 'apache24', 'nginx'])
                     ->defaultValue("nginx")
+                ->end()
+                ->scalarNode('user')
+                    ->info('Webserver running user.')
+                    ->defaultValue("www-data")
+                ->end()
+                ->integerNode('port')
+                    ->info('Webserver port.')
+                    ->defaultValue(80)
                 ->end()
                 ->scalarNode('domain_suffix')
                     ->info('Suffix to append after username to create website domain name (default .dev).')

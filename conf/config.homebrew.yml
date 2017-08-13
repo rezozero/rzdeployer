@@ -1,0 +1,17 @@
+---
+deployer:
+  database:
+    user: root
+    password: root
+  user:
+    path: "/Users"
+  web_server:
+    type: "nginx"
+    user: "yourusername"
+    port: 8080
+    available_path: "/usr/local/etc/nginx/sites-available"
+    enabled_path: "/usr/local/etc/nginx/sites-enabled"
+  php_fpm:
+    version: "7.1"
+    pool_path: "/usr/local/etc/php/7.1/php-fpm.d"
+    socket_path: "/usr/local/var/run"

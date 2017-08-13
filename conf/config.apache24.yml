@@ -1,0 +1,19 @@
+---
+deployer:
+  database:
+    user: root
+    password: root
+  user:
+    path: "/var/www/vhosts"
+    group: "www-data"
+  web_server:
+    type: "apache24"
+    user: "www-data"
+    port: 80
+    available_path: "/etc/apache2/sites-available"
+    enabled_path: "/etc/apache2/sites-enabled"
+    domain_suffix: ".com"
+  php_fpm:
+    version: "7.1"
+    pool_path: "/etc/php/7.1/pool.d"
+    socket_path: "/var/run"

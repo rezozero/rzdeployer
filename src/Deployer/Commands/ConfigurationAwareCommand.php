@@ -19,6 +19,14 @@ abstract class ConfigurationAwareCommand extends Command
      */
     private $configuration;
 
+    /**
+     * @return bool
+     */
+    protected function needsPrivileges()
+    {
+        return false;
+    }
+
     private function loadConfiguration()
     {
         $configDirectories = [APP_ROOT.'/conf'];
@@ -55,9 +63,12 @@ abstract class ConfigurationAwareCommand extends Command
          * Check running user
          */
         $user = trim(shell_exec('whoami'));
-        if ($this->configuration['sudo'] === true && $user !== 'root') {
-            throw new InvalidArgumentException('You must run this command with sudo.');
-        } elseif ($this->configuration['sudo'] === false && $user === 'root') {
+
+        if ($this->needsPrivileges() && $user !== 'root') {
+            throw new InvalidArgumentException('This command requires admin privileges, you must run this command with sudo.');
+        }
+
+        if (!$this->needsPrivileges() && $user === 'root') {
             throw new InvalidArgumentException('You must not run this command with sudo or as root.');
         }
     }

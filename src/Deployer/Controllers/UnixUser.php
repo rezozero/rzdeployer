@@ -12,169 +12,297 @@
 namespace rezozero\Deployer\Controllers;
 
 
-class UnixUser {
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Process\ProcessBuilder;
 
+class UnixUser
+{
+    /**
+     * @var string
+     */
     private $username;
+    /**
+     * @var string
+     */
     private $password;
+    /**
+     * @var string
+     */
     private $homeFolder;
-    private $vhostRoot;
+    /**
+     * @var array
+     */
+    private $configuration;
+    /**
+     * @var array
+     */
+    private $groups;
+    /**
+     * @var string
+     */
+    private $vhostFolder;
+    /**
+     * @var string
+     */
+    private $logFolder;
+    /**
+     * @var string
+     */
+    private $privateFolder;
 
-    public function __construct( $username )
+    /**
+     * UnixUser constructor.
+     *
+     * @param $username
+     * @param $password
+     * @param array $configuration
+     */
+    public function __construct($username, $password = "", array $configuration = [])
     {
-        $mainConf = Kernel::getInstance()->getConfiguration()->getData();
+        $this->configuration = $configuration;
 
-        $this->username =   $username;
-        $this->password =   Password::generate(14);
-        $this->homeFolder = $mainConf["webserver_root"]."/".Kernel::getInstance()->getConfiguration()->getHostname();
-
-        $this->vhostRoot = (!empty($mainConf['vhost_root']) ? $mainConf['vhost_root'] : 'htdocs');
+        $this->username = $username;
+        $this->password = $password;
+        $this->groups = [
+            $this->configuration["user"]["group"]
+        ];
+        $this->homeFolder = $this->configuration["user"]["path"] . DIRECTORY_SEPARATOR . $username;
+        $this->vhostFolder = $this->homeFolder . DIRECTORY_SEPARATOR . $this->configuration["user"]["server_root"];
+        $this->logFolder = $this->homeFolder . DIRECTORY_SEPARATOR . "log";
+        $this->privateFolder = $this->homeFolder . DIRECTORY_SEPARATOR . "private";
     }
 
-    public function createUser()
+    /**
+     * @return string
+     */
+    public function getHomeFolder()
     {
-        $mainConf = Kernel::getInstance()->getConfiguration()->getData();
+        return $this->homeFolder;
+    }
 
-        $results = null;
+    /**
+     * @return string
+     */
+    public function getVhostFolder()
+    {
+        return $this->vhostFolder;
+    }
 
-        /*
-         * Additionnal groups
-         */
-        $groups = array();
+    /**
+     * @return string
+     */
+    public function getLogFolder()
+    {
+        return $this->logFolder;
+    }
 
-        if (!empty($mainConf["allowssh_group"])) {
-            $groups[] = $mainConf["allowssh_group"];
+    /**
+     * @return string
+     */
+    public function getPrivateFolder()
+    {
+        return $this->privateFolder;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        if ($this->userExists() && file_exists($this->homeFolder)) {
+            return true;
         }
 
-        /*
-         * Create user without password
-         */
-        $userQuery = array(
-            'useradd',
-            '--home '.$this->homeFolder,
-            '-m',
-            '-s /bin/bash'
-        );
+        return false;
+    }
 
-        if (count($groups) > 0) {
-            $userQuery[] = "-G ".implode(',', $groups);
-        }
+    /**
+     * @return bool
+     */
+    public function userExists()
+    {
+        $builder = new ProcessBuilder([
+            'id', '-u', $this->username
+        ]);
+        $process = $builder->getProcess();
+        $process->run();
 
-        $userQuery[] = $this->username;
-
-        exec(implode(' ', $userQuery), $results);
-        if (count($results) > 0) {
-            echo "[ERROR] Unable to create unix user.".PHP_EOL;
-            return false;
-        }
-
-        /*
-         * Add password
-         */
-        $pwQuery = 'usermod -p '.Password::encrypt($this->password).' '.$this->username;
-        exec($pwQuery, $pwResults);
-        if (count($pwResults) > 0) {
-            echo "[ERROR] Unable to set unix user password.".PHP_EOL;
+        if (!$process->isSuccessful()) {
             return false;
         }
 
         return true;
     }
 
-    public function getHome()
+    /**
+     * Create user and its files
+     */
+    public function create()
     {
-        return $this->homeFolder;
-    }
-    public function getName()
-    {
-        return $this->username;
-    }
-    public function getPassword()
-    {
-        return $this->password;
+        $this->createUser();
+        $this->changePassword();
+        $this->createFileStructure();
     }
 
-    public function userExists()
+    protected function createUser()
     {
-        return file_exists($this->homeFolder);
-    }
-
-    public function createFileStructure()
-    {
-        $mainConf = Kernel::getInstance()->getConfiguration()->getData();
-
-        if (chdir($this->homeFolder) !== false) {
-            /*
-             * Change user home mod to 750 and writable by www-data
-             */
-            chown($this->homeFolder, $mainConf['webserver_group']);
-            chgrp($this->homeFolder, $this->username);
-            chmod($this->homeFolder, 0750);
-
-            // Create special log folder
-            $this->createFolder($this->homeFolder."/log", 0770);
-            chown($this->homeFolder."/log", $this->username);
-            chgrp($this->homeFolder."/log", "root");
-
-            // Create user folders
-            $this->createFolder($this->homeFolder."/".$this->vhostRoot);
-            $this->createFolder($this->homeFolder."/private");
-            $this->createFolder($this->homeFolder."/private/git");
-            $this->createFolder($this->homeFolder."/private/backup", 0700);
-
-            // Special folder to store your domain DKIM public and private keys
-            $this->createFolder($this->homeFolder."/private/dkim");
-            chmod($this->homeFolder."/private/dkim", 0700);
-
-            /*
-             * SSH folder must be only read/writeable by user
-             */
-            $this->createFolder($this->homeFolder."/.ssh", 0700);
-
-            /*
-             * ssh-keygen -q -t rsa -N "" -C "comment" -f ~/.ssh/id_rsa
-             */
-            $createSSHKeyQuery = array(
-                'ssh-keygen',
-                '-q',
-                '-t rsa',
-                '-N ""',
-                '-C "' . $this->username . '"',
-                '-f ' . $this->homeFolder . '/.ssh/id_rsa',
-            );
-            exec(implode(' ', $createSSHKeyQuery));
-            $this->ownPath($this->homeFolder . '/.ssh/id_rsa');
-            $this->ownPath($this->homeFolder . '/.ssh/id_rsa.pub');
-
-            /*
-             * Create composer cache folder
-             */
-            $this->createFolder($this->homeFolder."/.composer", 0700);
-
-            // Create test file
-            file_put_contents($this->homeFolder."/".$this->vhostRoot."/index.php", "<?php phpinfo(); ?>");
-            chown($this->homeFolder."/".$this->vhostRoot."/index.php", $this->username);
-            chgrp($this->homeFolder."/".$this->vhostRoot."/index.php", $this->username);
-            chmod($this->homeFolder."/".$this->vhostRoot."/index.php", 0644);
-
-            return true;
+        if (!empty($this->configuration["user"]["allowssh_group"])) {
+            $this->groups[] = $this->configuration["user"]["allowssh_group"];
         }
-        return false;
+
+        /*
+         * Create user without password
+         */
+        $userQuery = [
+            'useradd',
+            '--home', $this->homeFolder,
+            '-m',
+            '-s', '/bin/bash'
+        ];
+
+        if (count($this->groups) > 0) {
+            $userQuery[] = "-G";
+            $userQuery[] = implode(',', $this->groups);
+        }
+
+        $userQuery[] = $this->username;
+
+        $builder = new ProcessBuilder($userQuery);
+        $process = $builder->getProcess();
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new InvalidArgumentException("Unable to create unix user: " . $process->getErrorOutput());
+        }
     }
 
-    public function createFile($path, $mode = 0644)
+    /**
+     *
+     */
+    protected function changePassword()
+    {
+        /*
+         * Add password
+         */
+        $passwordTool = new Password();
+        $builder = new ProcessBuilder([
+            'usermod',
+            '-p', $passwordTool->encrypt($this->password),
+            $this->username
+        ]);
+        $process = $builder->getProcess();
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new InvalidArgumentException("Unable to change user password: " . $process->getErrorOutput());
+        }
+    }
+
+
+    protected function createFileStructure()
+    {
+        if (chdir($this->homeFolder) === false) {
+            throw new InvalidArgumentException("Unable to change directory into: " . $this->homeFolder);
+        }
+
+        /*
+         * Change user home mod to 750 and writable by www-data
+         */
+        chown($this->homeFolder, $this->configuration["user"]["group"]);
+        chgrp($this->homeFolder, $this->username);
+        chmod($this->homeFolder, 0750);
+
+        // Create special log folder
+        $this->createFolder($this->logFolder, 0770);
+        chown($this->logFolder, $this->username);
+        chgrp($this->logFolder, "root");
+
+        // Create user folders
+
+        $this->createFolder($this->vhostFolder);
+        $this->createFolder($this->privateFolder);
+        $this->createFolder($this->privateFolder . DIRECTORY_SEPARATOR . "git");
+        $this->createFolder($this->privateFolder . DIRECTORY_SEPARATOR . "backup", 0700);
+
+        // Special folder to store your domain DKIM public and private keys
+        $dkimFolder = $this->privateFolder . DIRECTORY_SEPARATOR . "dkim";
+        $this->createFolder($dkimFolder);
+        chmod($dkimFolder, 0700);
+
+        /*
+         * SSH folder must be only read/writeable by user
+         */
+        $sshFolder = $this->homeFolder . DIRECTORY_SEPARATOR . '.ssh';
+        $this->createFolder($sshFolder, 0700);
+        $this->createSshKey($sshFolder);
+
+        /*
+         * Create composer and yarn cache folder
+         */
+        $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".composer", 0700);
+        $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".yarn", 0700);
+
+        // Create test file
+        file_put_contents($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", "<?php phpinfo(); ?>");
+        chown($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", $this->username);
+        chgrp($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", $this->username);
+        chmod($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", 0644);
+    }
+
+    /**
+     * @param string $sshFolder
+     */
+    protected function createSshKey($sshFolder)
+    {
+        /*
+         * ssh-keygen -q -t rsa -N "" -C "comment" -f ~/.ssh/id_rsa
+         */
+        $createSSHKeyQuery = [
+            'ssh-keygen',
+            '-q',
+            '-t', 'rsa',
+            '-N', '',
+            '-C', $this->username,
+            '-f', $sshFolder . DIRECTORY_SEPARATOR . 'id_rsa',
+        ];
+
+        $builder = new ProcessBuilder($createSSHKeyQuery);
+        $process = $builder->getProcess();
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new InvalidArgumentException("Unable to create ssh keys: " . $process->getErrorOutput());
+        }
+
+        $this->ownPath($sshFolder . DIRECTORY_SEPARATOR . 'id_rsa');
+        $this->ownPath($sshFolder . DIRECTORY_SEPARATOR . 'id_rsa.pub');
+    }
+
+    /**
+     * @param string $path
+     * @param int $mode
+     */
+    protected function createFile($path, $mode = 0644)
     {
         touch($path);
         $this->ownPath($path);
         chmod($path, $mode);
     }
-    
-    public function createFolder($path, $mode = 0755)
+
+    /**
+     * @param string $path
+     * @param int $mode
+     */
+    protected function createFolder($path, $mode = 0755)
     {
         mkdir($path, $mode, true);
         $this->ownPath($path);
     }
 
-    public function ownPath($path)
+    /**
+     * @param string $path
+     */
+    protected function ownPath($path)
     {
         chown($path, $this->username);
         chgrp($path, $this->username);
