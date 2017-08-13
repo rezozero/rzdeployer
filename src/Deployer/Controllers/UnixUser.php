@@ -167,6 +167,7 @@ class UnixUser {
         $this->ownPath($path);
         chmod($path, $mode);
     }
+    
     public function createFolder($path, $mode = 0755)
     {
         mkdir($path, $mode, true);

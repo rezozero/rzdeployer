@@ -3,7 +3,6 @@
 
 namespace rezozero\Deployer\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,6 +36,8 @@ class CreateUnixUserCommand extends ConfigurationAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
+
         $config = $this->getConfiguration();
 
         $username = $input->getArgument('username');

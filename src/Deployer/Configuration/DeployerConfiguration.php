@@ -17,6 +17,11 @@ class DeployerConfiguration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('deployer');
 
         $rootNode
+            ->children()
+                ->booleanNode('sudo')
+                ->isRequired()
+                ->end()
+            ->end()
             ->append($this->addDatabaseNode())
             ->append($this->addUserNode())
             ->append($this->addPhpNode())
@@ -42,6 +47,9 @@ class DeployerConfiguration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('password')
                     ->isRequired()
+                ->end()
+                ->integerNode('password_length')
+                    ->defaultValue(8)
                 ->end()
             ->end();
 
@@ -89,7 +97,7 @@ class DeployerConfiguration implements ConfigurationInterface
                     ->info('PHP version installed on system.')
                     ->defaultValue("7.0")
                 ->end()
-                ->scalarNode('pools_path')
+                ->scalarNode('pool_path')
                     ->info('Path where PHP-FPM pool files are stored.')
                     ->defaultValue("/etc/php/7.0/fpm/pool.d")
                 ->end()
@@ -110,6 +118,10 @@ class DeployerConfiguration implements ConfigurationInterface
                     ->info('Webserver type.')
                     ->values(['apache2', 'nginx'])
                     ->defaultValue("nginx")
+                ->end()
+                ->scalarNode('domain_suffix')
+                    ->info('Suffix to append after username to create website domain name (default .dev).')
+                    ->defaultValue(".dev")
                 ->end()
                 ->scalarNode('available_path')
                     ->info('Path where webserver stores available virtual host files.')

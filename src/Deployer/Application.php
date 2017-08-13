@@ -3,7 +3,9 @@
 
 namespace rezozero\Deployer;
 
+use rezozero\Deployer\Commands\CreateDatabaseUserCommand;
 use rezozero\Deployer\Commands\CreateUnixUserCommand;
+use rezozero\Deployer\Commands\DropDatabaseUserCommand;
 
 class Application extends \Symfony\Component\Console\Application
 {
@@ -29,7 +31,9 @@ class Application extends \Symfony\Component\Console\Application
     protected function getDefaultCommands()
     {
         return array_merge(parent::getDefaultCommands(), [
-            new CreateUnixUserCommand()
+            new CreateUnixUserCommand(),
+            new CreateDatabaseUserCommand(),
+            new DropDatabaseUserCommand(),
         ]);
     }
 }

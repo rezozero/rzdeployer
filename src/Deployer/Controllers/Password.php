@@ -30,7 +30,7 @@ class Password
             throw new ProcessFailedException($process);
         }
 
-        return $process->getOutput();
+        return trim($process->getOutput());
     }
 
     /**
@@ -39,14 +39,12 @@ class Password
      */
     public function generate($length = 8)
     {
-        //cat /dev/urandom| tr -dc 'a-zA-Z0-9' | fold -w 12| head -n 1
-
-        $process = new Process("openssl rand -base64 36 | tr -dc 'a-zA-Z0-9\-\_\\$\@' | fold -w ".(int)$length." | head -n 1");
+        $process = new Process("openssl rand -base64 " . ($length*5) . " | tr -dc \"a-zA-Z0-9\-\_\\$\@\" | fold -w " . $length . " | head -n 1");
         $process->run();
         // executes after the command finishes
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
-        return $process->getOutput();
+        return trim($process->getOutput());
     }
 }
