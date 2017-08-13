@@ -1,0 +1,89 @@
+<VirtualHost *:{{ server_port }}>
+    ServerName {{ server_name }}
+
+    # Uncomment the following line to force Apache to pass the Authorization
+    # header to PHP: required for "basic_auth" under PHP-FPM and FastCGI
+    #
+    # SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+
+    # For Apache 2.4.9 or higher
+    # Using SetHandler avoids issues with using ProxyPassMatch in combination
+    # with mod_rewrite or mod_autoindex
+    <FilesMatch \.php$>
+        # for Unix sockets, Apache 2.4.10 or higher
+        SetHandler proxy:unix:{{ php_sock }}|fcgi://dummy
+    </FilesMatch>
+
+    # If you use Apache version below 2.4.9 you must consider update or use this instead
+    # ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
+
+    # If you run your Symfony application on a subpath of your document root, the
+    # regular expression must be changed accordingly:
+    # ProxyPassMatch ^/path-to-app/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
+
+    DocumentRoot {{ server_root }}/web
+    <Directory {{ server_root }}/web>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride None
+
+        # enable the .htaccess rewrites
+        #AllowOverride All
+
+        Require all granted
+
+        IndexIgnore *
+
+        # Some security
+        <IfModule mod_headers.c>
+            Header set X-XSS-Protection "1; mode=block"
+            Header set X-Content-Type-Options "nosniff"
+            Header set X-Frame-Options "SAMEORIGIN"
+        </IfModule>
+
+        # ------------------------------------
+        # EXPIRES CACHING
+        # ------------------------------------
+        <IfModule mod_expires.c>
+            ExpiresActive On
+            ExpiresByType image/jpg "access plus 1 year"
+            ExpiresByType image/jpeg "access plus 1 year"
+            ExpiresByType image/gif "access plus 1 year"
+            ExpiresByType image/png "access plus 1 year"
+            ExpiresByType text/css "access plus 1 month"
+            ExpiresByType application/pdf "access plus 1 month"
+            ExpiresByType text/x-javascript "access plus 1 month"
+            ExpiresByType text/javascript "access plus 1 month"
+            ExpiresByType application/x-shockwave-flash "access plus 1 month"
+            ExpiresByType image/x-icon "access plus 1 year"
+            ExpiresByType application/vnd.ms-fontobject "access plus 1 month"
+            ExpiresByType application/x-font-ttf "access plus 1 month"
+            ExpiresByType application/x-font-opentype "access plus 1 month"
+            ExpiresByType application/x-font-woff "access plus 1 month"
+            ExpiresByType image/svg+xml "access plus 1 month"
+            ExpiresDefault "access plus 2 days"
+        </IfModule>
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            # Redirect to www
+            #RewriteCond %{HTTP_HOST} !^www\.
+            #RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+        </IfModule>
+    </Directory>
+
+    # uncomment the following lines if you install assets as symlinks
+    # or run into problems when compiling LESS/Sass/CoffeeScript assets
+    # <Directory {{ server_root }}>
+    #     Options FollowSymlinks
+    # </Directory>
+
+    <Directory {{ server_root }}/web/themes/>
+        <Files ~ "^\.php|yml|twig|xlf|rzn|rzt|rzg">
+            Require all denied
+        </Files>
+    </Directory>
+
+    ErrorLog {{ log_folder }}/error.log
+    CustomLog {{ log_folder }}/access.log combined
+</VirtualHost>

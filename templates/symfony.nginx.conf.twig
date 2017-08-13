@@ -1,5 +1,6 @@
 server {
     listen {{ webserver_port }};
+    listen [::]:{{ webserver_port }};
     server_name {{ server_name }};
     root {{ server_root }}/web;
 
