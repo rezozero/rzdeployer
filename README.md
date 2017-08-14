@@ -37,7 +37,11 @@ We always ensure that *Unix user* and *PHP user* can read/write the same files w
 
 ### Passwords
 
-RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure it’s correcty setup on your unix server.
+*RZ Deployer* uses `openssl` to generate and encrypt passwords. Be sure it’s correcty setup on your unix server.
+
+### SSH key
+
+*RZ Deployer* can automatically populate your new user with your existing SSH public keys to avoid typing your password. Just copy your `~/.ssh/*.pub` public keys to the `authorized_keys/` folder.
 
 ## Configuration
 
