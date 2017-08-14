@@ -63,9 +63,7 @@ class UnixUser
 
         $this->username = $username;
         $this->password = $password;
-        $this->groups = [
-            $this->configuration["user"]["group"]
-        ];
+        $this->groups = [];
         $this->homeFolder = $this->configuration["user"]["path"] . DIRECTORY_SEPARATOR . $username;
         $this->vhostFolder = $this->homeFolder . DIRECTORY_SEPARATOR . $this->configuration["user"]["server_root"];
         $this->logFolder = $this->homeFolder . DIRECTORY_SEPARATOR . "log";
@@ -177,6 +175,7 @@ class UnixUser
          */
         $userQuery = [
             'useradd',
+            '-g', $this->configuration["user"]["group"],
             '--home', $this->homeFolder,
             '-m',
             '-s', '/bin/bash'
@@ -230,8 +229,8 @@ class UnixUser
         /*
          * Change user home mod to 750 and writable by www-data
          */
-        chown($this->homeFolder, $this->configuration["user"]["group"]);
-        chgrp($this->homeFolder, $this->username);
+        chown($this->homeFolder, $this->username);
+        chgrp($this->homeFolder, $this->configuration["user"]["group"]);
         chmod($this->homeFolder, 0750);
 
         // Create special log folder
@@ -306,7 +305,7 @@ class UnixUser
      * @param string $path
      * @param int $mode
      */
-    protected function createFile($path, $mode = 0644)
+    protected function createFile($path, $mode = 0640)
     {
         touch($path);
         $this->ownPath($path);
@@ -317,7 +316,7 @@ class UnixUser
      * @param string $path
      * @param int $mode
      */
-    protected function createFolder($path, $mode = 0755)
+    protected function createFolder($path, $mode = 0750)
     {
         mkdir($path, $mode, true);
         $this->ownPath($path);
@@ -329,6 +328,6 @@ class UnixUser
     protected function ownPath($path)
     {
         chown($path, $this->username);
-        chgrp($path, $this->username);
+        chgrp($path, $this->configuration["user"]["group"]);
     }
 }
