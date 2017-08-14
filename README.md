@@ -14,16 +14,10 @@ We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-u
 * Create a virtual host config file (apache2 or nginx) in your sites-available
 * Create a symlink into your site-enabled folder
 
-## Input
+## Before using deployer
 
-Before processing, RZ Deployer will ask for:
-
-* A valid server name (ex: www.mywebsite.com)
-* A username
-
-MySQL username and database name will be named after the system user.
-MySQL username could be truncated if it's too long, but it will be displayed in final notification email.
-Virtual hosts files and home folder will named after your server name.
+* Make sure `/var/www/vhosts` is writable or change it in your config.yml
+* Install a webserver, php-fpm and MySQL/MariaDB
 
 ## How to use it
 
@@ -33,22 +27,17 @@ Virtual hosts files and home folder will named after your server name.
 * Copy `conf/config.homebrew.yml` or `conf/config.default.yml` to `conf/config.yml`
 * Edit your own configuration
 * Be sure to have at least PHP 5.6 installed in CLI mode.
-* Run `bin/deployer` (RZ Deployer may be run as super-user when creating users)
-* Follow instructions
+* Run `sudo bin/deployer all:create $USERNAME $TEMPLATE $PASSWORD` replacing variable with your own. We provide 3 templates: `roadiz`, `symfony` and `plain`.
 
 ### Apache and PHP-FPM
 
-We always ensure that *Unix user* and *PHP user* can read/write the same files without messing your file permissions. It's why we work with PHP-FPM, creating a different pool for each user so that PHP will run as your *user*, not *www-data*. To use Apache with PHP-FPM you can read these useful articles :
+We always ensure that *Unix user* and *PHP user* can read/write the same files without messing your file permissions. It's why we work with **PHP-FPM**, creating a different pool for each user so that PHP will run as your *user*, not *www-data*. To use Apache with PHP-FPM you must run at least with Apache 2.4 and enable `rewrite`, `proxy`, `proxy_fcgi`, `setenvif` modules (see our *Vagrantfile* for a typical Apache setup).
 
-* http://blog.kmp.or.at/2013/06/apache-2-2-on-debian-wheezy-w-php-fpm-fastcgi-apc-and-a-kind-of-suexec/
-* https://alexcabal.com/installing-apache-mod_fastcgi-php-fpm-on-ubuntu-server-maverick/
-* and some gist: https://gist.github.com/diemuzi/3849349
-
-**Nginx will work seamlessly with PHP-FPM**. Just make a regular install of Nginx.
+**Nginx will work seamlessly with PHP-FPM**, we recommand using it over Apache for beginners.
 
 ### Password
 
-RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure they are correcty setup on your unix server.
+RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure it’s correcty setup on your unix server.
 
 ## Configuration
 
@@ -122,3 +111,35 @@ Do not forget to update your `logrotate.d` script, for example:
     endscript
 }
 </code></pre>
+
+
+## Test
+
+```bash
+# Copy default configuration
+cp conf/config.default.yml conf/config.yml 
+# Set .dev as domain-suffix.
+
+# Launch Vagrant VM
+vagrant up
+# Log into your VM
+vagrant ssh
+# Go to your shared folder
+cd /vagrant
+
+# Create user, database and application
+sudo bin/deployer user:create test password
+bin/deployer database:create test password
+sudo bin/deployer application:create test plain
+
+# Restart services
+sudo service php7.1-fpm restart
+sudo service nginx restart
+
+# Go back to your computer
+exit
+# Add 192.168.34.10 to your hosts file under test.dev domain name
+sudo nano /etc/hosts
+# Check test.dev
+open http://test.dev
+```

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class RemoveApplicationCommand extends ConfigurationAwareCommand
 {
@@ -44,6 +45,11 @@ class RemoveApplicationCommand extends ConfigurationAwareCommand
         $username = $input->getArgument('username');
         $unixUser = new UnixUser($username, "", $config);
 
+        $question = new ConfirmationQuestion("<question>Are you sure to remove $username application configuration files?</question> [y|N]", false);
+        if ($this->getHelper('question')->ask($input, $output, $question) === false) {
+            return false;
+        }
+
         if (!$unixUser->exists()) {
             throw new InvalidArgumentException('User does not exist.');
         }
@@ -64,7 +70,7 @@ class RemoveApplicationCommand extends ConfigurationAwareCommand
             $output->write($phpPoolFilePath);
             $output->write(PHP_EOL);
 
-            return;
+            return true;
         }
 
         if (false === @unlink($vhostFilePath)) {

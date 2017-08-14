@@ -29,7 +29,7 @@ class CreateUnixUserCommand extends ConfigurationAwareCommand
 
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('unix-user:create')
+            ->setName('user:create')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new unix user <info>[Must be run as root]</info>.')
@@ -69,6 +69,6 @@ class CreateUnixUserCommand extends ConfigurationAwareCommand
         $unixUser->create();
         $output->writeln("User: <info>$username</info> has been created with password: <info>$password</info>");
         $output->writeln("Home: <info>" . $unixUser->getHomeFolder() . "</info>");
-        $output->writeln("Server root: <info>" . $unixUser->getVhostRoot() . "</info>");
+        $output->writeln("Server root: <info>" . $unixUser->getVhostFolder() . "</info>");
     }
 }

@@ -135,13 +135,35 @@ class UnixUser
     }
 
     /**
-     * Create user and its files
+     * Create user and its files.
      */
     public function create()
     {
-        $this->createUser();
-        $this->changePassword();
-        $this->createFileStructure();
+        if (!$this->exists()) {
+            $this->createUser();
+            $this->changePassword();
+            $this->createFileStructure();
+        }
+    }
+
+    /**
+     * Delete user and its home folder.
+     */
+    public function delete()
+    {
+        if ($this->userExists()) {
+            $builder = new ProcessBuilder([
+                'deluser',
+                '--remove-home',
+                $this->username
+            ]);
+            $process = $builder->getProcess();
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new InvalidArgumentException("Unable to delete unix user: " . $process->getErrorOutput());
+            }
+        }
     }
 
     protected function createUser()
@@ -240,7 +262,9 @@ class UnixUser
          * Create composer and yarn cache folder
          */
         $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".composer", 0700);
+        $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".cache", 0700);
         $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".yarn", 0700);
+        $this->createFile($this->homeFolder . DIRECTORY_SEPARATOR . ".bash_history", 0640);
 
         // Create test file
         file_put_contents($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", "<?php phpinfo(); ?>");

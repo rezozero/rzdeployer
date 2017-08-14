@@ -118,7 +118,7 @@ class DeployerConfiguration implements ConfigurationInterface
             ->children()
                 ->enumNode('type')
                     ->info('Webserver type.')
-                    ->values(['apache22', 'apache24', 'nginx'])
+                    ->values(['apache24', 'nginx'])
                     ->defaultValue("nginx")
                 ->end()
                 ->scalarNode('user')

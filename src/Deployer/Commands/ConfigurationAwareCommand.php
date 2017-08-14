@@ -67,9 +67,5 @@ abstract class ConfigurationAwareCommand extends Command
         if ($this->needsPrivileges() && $user !== 'root') {
             throw new InvalidArgumentException('This command requires admin privileges, you must run this command with sudo.');
         }
-
-        if (!$this->needsPrivileges() && $user === 'root') {
-            throw new InvalidArgumentException('You must not run this command with sudo or as root.');
-        }
     }
 }

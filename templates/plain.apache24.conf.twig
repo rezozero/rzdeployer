@@ -15,28 +15,28 @@
     </FilesMatch>
 
     # If you use Apache version below 2.4.9 you must consider update or use this instead
-    # ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
+    # ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/$1
 
-    # If you run your Symfony application on a subpath of your document root, the
-    # regular expression must be changed accordingly:
-    # ProxyPassMatch ^/path-to-app/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
-
-    DocumentRoot {{ server_root }}/web
-    <Directory {{ server_root }}/web>
+    DocumentRoot {{ server_root }}
+    <Directory {{ server_root }}>
         Options -Indexes +FollowSymLinks +MultiViews
-        AllowOverride None
 
         # enable the .htaccess rewrites
-        #AllowOverride All
+        AllowOverride All
 
         Require all granted
-    </Directory>
 
-    # uncomment the following lines if you install assets as symlinks
-    # or run into problems when compiling LESS/Sass/CoffeeScript assets
-    # <Directory {{ server_root }}>
-    #     Options FollowSymlinks
-    # </Directory>
+        IndexIgnore *
+
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            # Redirect to www
+            #RewriteCond %{HTTP_HOST} !^www\.
+            #RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+        </IfModule>
+    </Directory>
 
     ErrorLog {{ log_folder }}/error.log
     CustomLog {{ log_folder }}/access.log combined

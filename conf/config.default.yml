@@ -15,5 +15,5 @@ deployer:
     domain_suffix: ".com"
   php_fpm:
     version: "7.1"
-    pool_path: "/etc/php/7.1/pool.d"
+    pool_path: "/etc/php/7.1/fpm/pool.d"
     socket_path: "/var/run"

@@ -20,7 +20,7 @@ class DropDatabaseUserCommand extends ConfigurationAwareCommand
 
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('database:drop')
+            ->setName('database:remove')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Drop an existing database with its user.')

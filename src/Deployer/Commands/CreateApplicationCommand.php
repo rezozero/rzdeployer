@@ -47,10 +47,6 @@ class CreateApplicationCommand extends ConfigurationAwareCommand
         $username = $input->getArgument('username');
         $unixUser = new UnixUser($username, "", $config);
 
-        if (!$unixUser->exists()) {
-            throw new InvalidArgumentException('User does not exist.');
-        }
-
         $webserverTemplate = $input->getArgument('type') . '.' . $config['web_server']['type'] . '.conf.twig';
         $phpTemplate = 'php_pool.conf.twig';
 
