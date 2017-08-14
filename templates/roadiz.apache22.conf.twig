@@ -1,35 +1,13 @@
 <VirtualHost *:{{ webserver_port }}>
     ServerName {{ server_name }}
-
-    # Uncomment the following line to force Apache to pass the Authorization
-    # header to PHP: required for "basic_auth" under PHP-FPM and FastCGI
-    #
-    # SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
-
-    # For Apache 2.4.9 or higher
-    # Using SetHandler avoids issues with using ProxyPassMatch in combination
-    # with mod_rewrite or mod_autoindex
-    <FilesMatch \.php$>
-        # for Unix sockets, Apache 2.4.10 or higher
-        SetHandler proxy:unix:{{ php_sock }}|fcgi://dummy
-    </FilesMatch>
-
-    # If you use Apache version below 2.4.9 you must consider update or use this instead
-    # ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
-
-    # If you run your Symfony application on a subpath of your document root, the
-    # regular expression must be changed accordingly:
-    # ProxyPassMatch ^/path-to-app/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ server_root }}/web/$1
-
     DocumentRoot {{ server_root }}/web
+
     <Directory {{ server_root }}/web>
         Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride None
 
-        # enable the .htaccess rewrites
-        #AllowOverride All
-
-        Require all granted
+        Order Allow,Deny
+        Allow from all
 
         IndexIgnore *
 
@@ -77,6 +55,11 @@
             Require all denied
         </Files>
     </Directory>
+
+    AddHandler php-fcgi .php
+    Action php-fcgi /php-fcgi
+    Alias /php-fcgi /usr/lib/cgi-bin/php-fcgi
+    FastCgiExternalServer /usr/lib/cgi-bin/php-fcgi -socket {{ php_sock }} -pass-header Authorization
 
     ErrorLog {{ log_folder }}/error.log
     CustomLog {{ log_folder }}/access.log combined

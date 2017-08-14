@@ -1,0 +1,29 @@
+<VirtualHost *:{{ webserver_port }}>
+    ServerName {{ server_name }}
+    DocumentRoot {{ server_root }}/web
+
+    <Directory {{ server_root }}/web>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride None
+
+        # enable the .htaccess rewrites
+        #AllowOverride All
+
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+
+    # uncomment the following lines if you install assets as symlinks
+    # or run into problems when compiling LESS/Sass/CoffeeScript assets
+    # <Directory {{ server_root }}>
+    #     Options FollowSymlinks
+    # </Directory>
+
+    AddHandler php-fcgi .php
+    Action php-fcgi /php-fcgi
+    Alias /php-fcgi /usr/lib/cgi-bin/php-fcgi
+    FastCgiExternalServer /usr/lib/cgi-bin/php-fcgi -socket {{ php_sock }} -pass-header Authorization
+
+    ErrorLog {{ log_folder }}/error.log
+    CustomLog {{ log_folder }}/access.log combined
+</VirtualHost>

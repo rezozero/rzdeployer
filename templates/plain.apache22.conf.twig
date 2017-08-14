@@ -1,0 +1,32 @@
+<VirtualHost *:{{ webserver_port }}>
+    ServerName {{ server_name }}
+    DocumentRoot {{ server_root }}
+
+    <Directory {{ server_root }}>
+        Options -Indexes +FollowSymLinks +MultiViews
+
+        # enable the .htaccess rewrites
+        AllowOverride All
+        Order Allow,Deny
+        Allow from all
+
+        IndexIgnore *
+
+        <IfModule mod_rewrite.c>
+            RewriteEngine On
+            # Redirect to www
+            #RewriteCond %{HTTP_HOST} !^www\.
+            #RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+        </IfModule>
+    </Directory>
+
+    AddHandler php-fcgi .php
+    Action php-fcgi /php-fcgi
+    Alias /php-fcgi /usr/lib/cgi-bin/php-fcgi
+    FastCgiExternalServer /usr/lib/cgi-bin/php-fcgi -socket {{ php_sock }} -pass-header Authorization
+
+    ErrorLog {{ log_folder }}/error.log
+    CustomLog {{ log_folder }}/access.log combined
+</VirtualHost>

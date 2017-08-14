@@ -75,7 +75,7 @@ deployer:
     #password_length: 12
     
   web_server:
-    # Webserver type (apache24 or nginx).
+    # Webserver type (apache22, apache24 or nginx).
     type: "nginx"
     # Webserver running user.
     user: "www-data"
