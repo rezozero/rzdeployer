@@ -22,12 +22,12 @@ We recommand using **Nginx** instead of *Apache* as it's easier to setup multi-u
 ## How to use it
 
 * Clone current repository and `cd rzdeployer`
-* Install *Composer* : `curl -sS https://getcomposer.org/installer | php`
+* Install *Composer*
 * Run `php composer.phar install` to install dependencies and create the *autoloader*
 * Copy `conf/config.homebrew.yml` or `conf/config.default.yml` to `conf/config.yml`
 * Edit your own configuration
 * Be sure to have at least PHP 5.6 installed in CLI mode.
-* Run `sudo bin/deployer all:create $USERNAME $TEMPLATE $PASSWORD` replacing variable with your own. We provide 3 templates: `roadiz`, `symfony` and `plain`.
+* Run `sudo bin/deployer all:create $USERNAME $TEMPLATE $PASSWORD` replacing variable with your own. We provide 3 templates: `roadiz`, `symfony` and `plain`. You can leave `$PASSWORD` empty, it will generate random passwords for SSH user and database.
 
 ### Apache and PHP-FPM
 
@@ -35,13 +35,69 @@ We always ensure that *Unix user* and *PHP user* can read/write the same files w
 
 **Nginx will work seamlessly with PHP-FPM**, we recommand using it over Apache for beginners.
 
-### Password
+### Passwords
 
 RZ Deployer uses `openssl` to generate and encrypt passwords. Be sure it’s correcty setup on your unix server.
 
 ## Configuration
 
-Check `conf/config.default.yml`.
+Check `conf/config.default.yml`. Each commented option has a default value and is optional.
+
+```yaml
+deployer:
+  database:
+    # Database user to use for CLI creations and deletions
+    user: root
+    # CLI user password (enter your MySQL root password)
+    password: root
+    
+    # Default localhost
+    #host: localhost
+    
+    # Default password length: 12 characters
+    #password_length: 12
+    
+  user:
+    # This value defined each unix user home root path on system.
+    path: "/var/www/vhosts"
+    # This value defined each unix base group.
+    group: "www-data"
+    
+    # If you need to add an other group to
+    # generated user: default null
+    #allowssh_group: "ssh_user"
+    
+    # Default server root folder
+    # for each new user.
+    #server_root: "htdocs"
+    
+    # Default password length: 12 characters
+    #password_length: 12
+    
+  web_server:
+    # Webserver type (apache24 or nginx).
+    type: "nginx"
+    # Webserver running user.
+    user: "www-data"
+    
+    # Web server port. Default 80
+    #port: 80
+    
+    # Suffix to append after username to create website domain name (default .dev).
+    domain_suffix: ".com"
+    # Path where web-server stores available virtual host files.
+    available_path: "/etc/nginx/sites-available"
+    # Path where web-server stores enabled virtual host files.
+    enabled_path: "/etc/nginx/sites-enabled"
+
+  php_fpm:
+    # PHP version installed on system.
+    version: "7.1"
+    # Path where PHP-FPM pool files are stored.
+    pool_path: "/etc/php/7.1/fpm/pool.d"
+    # Path where PHP-FPM socket files are created.
+    socket_path: "/var/run"
+```
 
 ## Files
 
@@ -128,9 +184,7 @@ vagrant ssh
 cd /vagrant
 
 # Create user, database and application
-sudo bin/deployer user:create test password
-bin/deployer database:create test password
-sudo bin/deployer application:create test plain
+sudo bin/deployer all:create test plain password
 
 # Restart services
 sudo service php7.1-fpm restart
