@@ -40,5 +40,6 @@ Vagrant.configure("2") do |config|
     php composer-setup.php --quiet
     rm composer-setup.php
     sudo mv composer.phar /usr/bin/composer
+    sudo mkdir -p /var/www/vhosts
   SHELL
 end

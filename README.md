@@ -173,7 +173,7 @@ Do not forget to update your `logrotate.d` script, for example:
 
 ```bash
 # Copy default configuration
-cp conf/config.default.yml conf/config.yml 
+cp conf/config.vagrant.yml conf/config.yml 
 # Set .dev as domain-suffix.
 
 # Launch Vagrant VM
