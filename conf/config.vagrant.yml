@@ -12,7 +12,7 @@ deployer:
     port: 80
     available_path: "/etc/nginx/sites-available"
     enabled_path: "/etc/nginx/sites-enabled"
-    domain_suffix: ".com"
+    domain_suffix: ".dev"
   php_fpm:
     version: "7.1"
     pool_path: "/etc/php/7.1/fpm/pool.d"
