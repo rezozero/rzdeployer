@@ -108,7 +108,7 @@ RZ Deployer will generate the following file tree in your webserver root :
 * (/var/www/vhosts)**/www.yourdomain.com** *[user:www-data:0750]*
     * **/htdocs** *[user:www-data:0750]*
         * index.php (with phpinfo(); method)
-    * **/log** *[user:root:0770]*
+    * **/log** *[user:www-data:0770]*
         * access.log
         * error.log
         * fpm-error.log

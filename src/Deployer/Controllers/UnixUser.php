@@ -13,6 +13,8 @@ namespace rezozero\Deployer\Controllers;
 
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\ProcessBuilder;
 
 class UnixUser
@@ -235,8 +237,6 @@ class UnixUser
 
         // Create special log folder
         $this->createFolder($this->logFolder, 0770);
-        chown($this->logFolder, $this->username);
-        chgrp($this->logFolder, "root");
 
         // Create user folders
 
@@ -258,6 +258,24 @@ class UnixUser
         $this->createSshKey($sshFolder);
 
         /*
+         * Add public keys to user authorized_keys
+         */
+        $finder = new Finder();
+        $finder->files()->in(APP_ROOT . DIRECTORY_SEPARATOR . 'authorized_keys')->name('/\.pub$/');
+        $authorizedKeys = [];
+        foreach ($finder as $file) {
+            $authorizedKeys[] = $file->getContents();
+        }
+
+        if (count($authorizedKeys) > 0) {
+            $authorizedKeysPath = $sshFolder . DIRECTORY_SEPARATOR . "authorized_keys";
+            $this->createFile($authorizedKeysPath, 0600);
+            file_put_contents($authorizedKeysPath, implode(PHP_EOL, $authorizedKeys));
+            $this->ownPath($authorizedKeysPath);
+            chmod($authorizedKeysPath, 0600);
+        }
+
+        /*
          * Create composer and yarn cache folder
          */
         $this->createFolder($this->homeFolder . DIRECTORY_SEPARATOR . ".composer", 0700);
@@ -266,10 +284,10 @@ class UnixUser
         $this->createFile($this->homeFolder . DIRECTORY_SEPARATOR . ".bash_history", 0640);
 
         // Create test file
-        file_put_contents($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", "<?php phpinfo(); ?>");
-        chown($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", $this->username);
-        chgrp($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", $this->username);
-        chmod($this->vhostFolder . DIRECTORY_SEPARATOR . "index.php", 0644);
+        $indexFilePath = $this->vhostFolder . DIRECTORY_SEPARATOR . "index.php";
+        file_put_contents($indexFilePath, "<?php phpinfo(); ?>");
+        $this->ownPath($indexFilePath);
+        chmod($indexFilePath, 0644);
     }
 
     /**

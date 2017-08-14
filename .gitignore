@@ -4,5 +4,8 @@
 /conf/config.yml
 /adddomain.php
 /composer.phar
+/composer.lock
+/authorized_keys/*
+!/authorized_keys/.gitkeep
 /.vagrant
 .subl*
