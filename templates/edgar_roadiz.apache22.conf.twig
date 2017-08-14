@@ -6,8 +6,10 @@
         Options -Indexes +FollowSymLinks +MultiViews
         AllowOverride None
 
-        Order Allow,Deny
-        Allow from all
+        # Deny all traffic
+        # except for RZ team IP addresses
+        Order allow,deny
+        Include team-ips.conf
 
         IndexIgnore *
 
@@ -57,10 +59,10 @@
         </Files>
     </Directory>
 
-    AddHandler php-fcgi .php
-    Action php-fcgi /php-fcgi
-    Alias /php-fcgi /usr/lib/cgi-bin/php-fcgi
-    FastCgiExternalServer /usr/lib/cgi-bin/php-fcgi -socket {{ php_sock }} -pass-header Authorization
+    # RZ Edgar server has special php-fpm configuration.
+    Action application/x-httpd-php /fcgi-bin/php7.0-fpm virtual
+    Alias /fcgi-bin/php7.0-fpm /fcgi-bin-php7.0-fpm-{{ username }}
+    FastCgiExternalServer /fcgi-bin-php7.0-fpm-{{ username }} -socket {{ php_sock }} -pass-header Authorization
 
     ErrorLog {{ log_folder }}/error.log
     CustomLog {{ log_folder }}/access.log combined

@@ -59,6 +59,7 @@ class CreateApplicationCommand extends ConfigurationAwareCommand
 
         $vars = [
             'username' => $username,
+            'user_group' => $config['user']['group'],
             'webserver_user' => $config['web_server']['user'],
             'webserver_port' => $config['web_server']['port'],
             'server_name' => $username . $config['web_server']['domain_suffix'],
