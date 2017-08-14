@@ -178,7 +178,7 @@ class UnixUser
             '-g', $this->configuration["user"]["group"],
             '--home', $this->homeFolder,
             '-m',
-            '-s', '/bin/bash'
+            '-s', $this->configuration["user"]["shell"]
         ];
 
         if (count($this->groups) > 0) {

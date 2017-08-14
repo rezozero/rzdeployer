@@ -62,6 +62,8 @@ deployer:
     path: "/var/www/vhosts"
     # This value defined each unix base group.
     group: "www-data"
+    # Default shell to attribute for each user.
+    shell: "/bin/bash"
     
     # If you need to add an other group to
     # generated user: default null
