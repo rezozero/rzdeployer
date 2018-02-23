@@ -4,7 +4,7 @@ server {
     server_name {{ server_name }};
     root {{ server_root }}/web;
 
-    index index.php index.html index.htm;
+    index index.html index.htm index.php;
 
     add_header "X-Frame-Options" "SAMEORIGIN";
     add_header "X-XSS-Protection" "1; mode=block";

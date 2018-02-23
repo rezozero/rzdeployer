@@ -4,11 +4,11 @@ server {
     server_name {{ server_name }};
 
     root {{ server_root }};
-    index index.php index.html index.htm;
+    index index.html index.htm index.php;
 
     location / {
         # try to serve file directly, fallback to app.php
-        try_files $uri /index.php$is_args$args;
+        try_files $uri $uri/ /index.php$is_args$args;
     }
     # DEV
     # This rule should only be placed on your development environment
